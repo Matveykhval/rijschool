@@ -11,9 +11,9 @@ export default {
       },
       colors: {
         brand: {
-          blue: '#1e3a8a',     // Deep trustworthy navy/royal blue (ANWB/CBR inspired)
-          blueLight: '#1d4ed8',
-          amber: '#d97706',    // Grounded safety amber/orange for CTAs
+          green: '#064e3b',     // Deep trustworthy forest/clover green
+          greenLight: '#047857',
+          amber: '#d97706',     // Grounded safety amber/orange for CTAs
           amberHover: '#b45309',
         }
       }
@@ -21,4 +21,3 @@ export default {
   },
   plugins: [],
 };
-

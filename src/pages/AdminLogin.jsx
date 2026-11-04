@@ -49,7 +49,7 @@ export default function AdminLogin() {
     <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 bg-slate-50">
       <div className="w-full max-w-md bg-white border border-slate-200 rounded-lg shadow-sm p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-          <div className="w-10 h-10 rounded-md bg-blue-900 text-white flex items-center justify-center">
+          <div className="w-10 h-10 rounded-md bg-emerald-900 text-white flex items-center justify-center">
             <Lock className="w-5 h-5" />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="info@klaverdrive.nl"
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800"
+              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800"
             />
           </div>
 
@@ -106,14 +106,14 @@ export default function AdminLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800"
+              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-900 hover:bg-blue-950 disabled:bg-blue-400 text-white font-bold py-3 px-4 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2 text-sm"
+            className="w-full bg-emerald-900 hover:bg-emerald-950 disabled:bg-emerald-400 text-white font-bold py-3 px-4 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2 text-sm"
           >
             <LogIn className="w-4 h-4" />
             {loading ? 'Bezig met inloggen...' : 'Inloggen op Dashboard'}
@@ -123,4 +123,3 @@ export default function AdminLogin() {
     </div>
   );
 }
-

@@ -43,31 +43,18 @@ export default function BookingForm({ selectedPackageName }) {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         preferred_datetime: formData.preferred_datetime.trim(),
-        transmission: formData.transmission,
+        transmission: 'schakel',
         message: formData.message.trim() || null,
         status: 'pending',
       };
 
       if (isSupabaseConfigured && supabase) {
-        // 1. Insert booking into the Supabase `bookings` table.
-        //    If you have configured a Supabase Database Webhook on `bookings` INSERT,
-        //    Supabase automatically invokes the `send-booking-email` Edge Function.
         const { error: insertError } = await supabase
           .from('bookings')
           .insert([bookingPayload]);
 
         if (insertError) throw insertError;
-
-        // 2. Optional fallback: If you prefer triggering the Edge Function directly from
-        //    the client instead of a Database Webhook, uncomment the lines below.
-        //    (The Resend API key remains safely inside the Supabase Edge Function environment.)
-        /*
-        await supabase.functions.invoke('send-booking-email', {
-          body: { record: bookingPayload },
-        });
-        */
       } else {
-        // Local demo fallback if .env is not configured yet
         const localBookings = JSON.parse(localStorage.getItem('demo_bookings') || '[]');
         localBookings.unshift({
           id: crypto.randomUUID(),
@@ -107,10 +94,10 @@ export default function BookingForm({ selectedPackageName }) {
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6 sm:p-8">
       <div className="mb-6 border-b border-slate-100 pb-4">
         <h3 className="text-xl font-bold text-slate-900">
-          Aanvraagformulier Proefles (60 min)
+          Aanvraagformulier Proefles
         </h3>
         <p className="text-sm text-slate-600 mt-1">
-          De proefles kost € 45,- en is <strong>geheel gratis</strong> wanneer je aansluitend kiest voor een lespakket.
+          De proefles is <strong>geheel gratis</strong> wanneer je aansluitend kiest voor een lespakket.
         </p>
       </div>
 
@@ -145,7 +132,7 @@ export default function BookingForm({ selectedPackageName }) {
               value={formData.name}
               onChange={handleChange}
               placeholder="Bijv. Sanne de Vries"
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
             />
           </div>
 
@@ -164,7 +151,7 @@ export default function BookingForm({ selectedPackageName }) {
               value={formData.phone}
               onChange={handleChange}
               placeholder="06 - 12 34 56 78"
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
             />
           </div>
         </div>
@@ -184,7 +171,7 @@ export default function BookingForm({ selectedPackageName }) {
             value={formData.email}
             onChange={handleChange}
             placeholder="sanne@voorbeeld.nl"
-            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
           />
         </div>
 
@@ -204,8 +191,8 @@ export default function BookingForm({ selectedPackageName }) {
               required
               value={formData.preferred_datetime}
               onChange={handleChange}
-              placeholder="Bijv. Donderdagmiddag 14 nov of op een zaterdagochtend"
-              className="w-full rounded-md border border-slate-300 pl-10 pr-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+              placeholder="Bijv. Donderdagmiddag of op een zaterdagochtend"
+              className="w-full rounded-md border border-slate-300 pl-10 pr-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
             />
           </div>
         </div>
@@ -215,7 +202,7 @@ export default function BookingForm({ selectedPackageName }) {
             htmlFor="message"
             className="block text-sm font-semibold text-slate-800 mb-1.5"
           >
-            Korte toelichting of ophaaladres (optioneel)
+            Woonplaats / Ophaaladres of korte toelichting (optioneel)
           </label>
           <textarea
             id="message"
@@ -223,8 +210,8 @@ export default function BookingForm({ selectedPackageName }) {
             rows={3}
             value={formData.message}
             onChange={handleChange}
-            placeholder="Heb je al rijervaring, een specifiek pakket op het oog of vragen over faalangstbegeleiding?"
-            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+            placeholder="Bijv. woonplaats (Den Hoorn, Delft, Den Haag, Rijswijk, Nootdorp, Ypenburg of Wateringen) of eerdere rijervaring..."
+            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
           />
         </div>
 
@@ -244,4 +231,3 @@ export default function BookingForm({ selectedPackageName }) {
     </div>
   );
 }
-

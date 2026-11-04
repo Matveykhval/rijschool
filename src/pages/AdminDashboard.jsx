@@ -353,7 +353,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('bookings')}
             className={`inline-flex items-center gap-2 px-5 py-3 font-bold text-sm border-b-2 transition-colors ${
               activeTab === 'bookings'
-                ? 'border-blue-800 text-blue-900 bg-white rounded-t-md'
+                ? 'border-emerald-800 text-emerald-900 bg-white rounded-t-md'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -371,7 +371,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('pricing')}
             className={`inline-flex items-center gap-2 px-5 py-3 font-bold text-sm border-b-2 transition-colors ${
               activeTab === 'pricing'
-                ? 'border-blue-800 text-blue-900 bg-white rounded-t-md'
+                ? 'border-emerald-800 text-emerald-900 bg-white rounded-t-md'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -409,7 +409,7 @@ export default function AdminDashboard() {
                     onClick={() => setStatusFilter(tab.key)}
                     className={`px-3 py-1.5 rounded text-xs font-bold border transition-colors ${
                       statusFilter === tab.key
-                        ? 'bg-blue-900 text-white border-blue-900'
+                        ? 'bg-emerald-900 text-white border-emerald-900'
                         : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
                     }`}
                   >
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                         <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-600">
                           <a
                             href={`tel:${booking.phone}`}
-                            className="flex items-center gap-1.5 font-semibold text-blue-800 hover:underline"
+                            className="flex items-center gap-1.5 font-semibold text-emerald-800 hover:underline"
                           >
                             <Phone className="w-3.5 h-3.5" />
                             {booking.phone}
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
                             Volgorde #{pkg.sort_order || 1}
                           </span>
                           {pkg.is_popular && (
-                            <span className="bg-blue-100 text-blue-900 text-xs font-bold px-2.5 py-0.5 rounded">
+                            <span className="bg-emerald-100 text-emerald-900 text-xs font-bold px-2.5 py-0.5 rounded">
                               Meest Gekozen Badge
                             </span>
                           )}
@@ -741,7 +741,7 @@ export default function AdminDashboard() {
                           setPkgForm({ ...pkgForm, featuresText: e.target.value })
                         }
                         placeholder={
-                          '30 rijlessen van 60 minuten\nCBR Praktijkexamen inbegrepen\nVaste instructeur'
+                          '30 rijlessen van 50 min (15 blokuren van 100 min)\nCBR Praktijkexamen inbegrepen\nVaste instructeur'
                         }
                         className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
                       />
@@ -754,7 +754,7 @@ export default function AdminDashboard() {
                         onChange={(e) =>
                           setPkgForm({ ...pkgForm, is_popular: e.target.checked })
                         }
-                        className="rounded border-slate-300 text-blue-800 focus:ring-blue-800"
+                        className="rounded border-slate-300 text-emerald-800 focus:ring-emerald-800"
                       />
                       Markeer als &ldquo;Meest Gekozen&rdquo; pakket
                     </label>
@@ -770,7 +770,7 @@ export default function AdminDashboard() {
                       <button
                         type="submit"
                         disabled={savingPackage}
-                        className="px-5 py-2 rounded bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold"
+                        className="px-5 py-2 rounded bg-emerald-900 hover:bg-emerald-950 text-white text-xs font-bold"
                       >
                         {savingPackage ? 'Opslaan...' : 'Pakket Opslaan'}
                       </button>
