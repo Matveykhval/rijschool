@@ -169,44 +169,23 @@ export default function BookingForm({ selectedPackageName }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-semibold text-slate-800 mb-1.5"
-            >
-              E-mailadres <span className="text-red-600">*</span>
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="sanne@voorbeeld.nl"
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="transmission"
-              className="block text-sm font-semibold text-slate-800 mb-1.5"
-            >
-              Schakel of Automaat
-            </label>
-            <select
-              id="transmission"
-              name="transmission"
-              value={formData.transmission}
-              onChange={handleChange}
-              className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 bg-white focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
-            >
-              <option value="schakel">Handgeschakeld (Schakelauto)</option>
-              <option value="automaat">Automaat</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-semibold text-slate-800 mb-1.5"
+          >
+            E-mailadres <span className="text-red-600">*</span>
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="sanne@voorbeeld.nl"
+            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm"
+          />
         </div>
 
         <div>

@@ -21,7 +21,7 @@ export default function Footer() {
               Al meer dan 15 jaar een vertrouwd gezicht op de weg. Persoonlijke rijlessen in een rustige, veilige sfeer met een vaste instructeur.
             </p>
             <p className="text-xs text-slate-500">
-              KvK: 68492014 &bull; CBR Rijschoolnummer: 4829K1
+              KvK: 68492014 &bull; CBR Rijschoolnummer: 1085G9
             </p>
           </div>
 

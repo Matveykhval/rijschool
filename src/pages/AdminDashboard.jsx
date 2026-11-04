@@ -142,7 +142,31 @@ export default function AdminDashboard() {
           .order('sort_order', { ascending: true });
 
         if (error) throw error;
-        setPackages(data || []);
+
+        if (data && data.length > 0) {
+          setPackages(data);
+        } else {
+          // Table is empty in Supabase — automatically seed the 3 default packages
+          const seedRows = DEFAULT_PACKAGES.map(({ name, subtitle, price, lessons_count, features, is_popular, sort_order }) => ({
+            name,
+            subtitle,
+            price,
+            lessons_count,
+            features,
+            is_popular,
+            sort_order,
+          }));
+          const { data: inserted, error: seedError } = await supabase
+            .from('packages')
+            .insert(seedRows)
+            .select('*');
+
+          if (!seedError && inserted && inserted.length > 0) {
+            setPackages(inserted);
+          } else {
+            setPackages(DEFAULT_PACKAGES);
+          }
+        }
       } else {
         const local = JSON.parse(
           localStorage.getItem('demo_packages') || JSON.stringify(DEFAULT_PACKAGES)
@@ -151,6 +175,7 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error('Error fetching packages:', err);
+      setPackages(DEFAULT_PACKAGES);
     } finally {
       setLoadingPackages(false);
     }
@@ -202,7 +227,7 @@ export default function AdminDashboard() {
 
     try {
       if (isSupabaseConfigured && supabase) {
-        if (isEditingPackage && pkgForm.id) {
+        if (isEditingPackage && pkgForm.id && !String(pkgForm.id).startsWith('default-')) {
           const { error } = await supabase
             .from('packages')
             .update(payload)

@@ -24,7 +24,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 font-medium text-white">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              CBR Erkend Opleider (Rijschoolnr. 4829K1)
+              CBR Erkend Opleider (Rijschoolnr. 1085G9)
             </span>
             <span className="hidden sm:inline text-slate-400">|</span>
             <span className="hidden sm:inline">Geen wachtlijst — start deze week nog</span>

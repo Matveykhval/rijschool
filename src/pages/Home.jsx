@@ -126,7 +126,7 @@ export default function Home() {
                   <div>
                     <p className="text-xs font-bold uppercase text-slate-500">Lesvoertuig</p>
                     <p className="text-sm font-bold text-slate-900">
-                      Volkswagen Golf 8 (Schakel &amp; Automaat)
+                      Volkswagen Golf 8 (Handgeschakeld)
                     </p>
                   </div>
                   <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded">
