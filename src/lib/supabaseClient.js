@@ -21,11 +21,11 @@ export const DEFAULT_PACKAGES = [
   {
     id: 'default-1',
     name: 'Basis Pakket',
-    subtitle: 'Voor leerlingen die snel de basis oppakken (10 ritten van 100 min)',
+    subtitle: 'Voor leerlingen die snel de basis oppakken',
     price: 1395,
     lessons_count: 20,
     features: [
-      '20 rijlessen van 50 min (10 blokuren van 100 min)',
+      '20 rijlessen',
       'Vaste gecertificeerde instructeur',
       'CBR Praktijkexamen inbegrepen',
       'Gratis toegang tot online theorie-omgeving',
@@ -37,11 +37,11 @@ export const DEFAULT_PACKAGES = [
   {
     id: 'default-2',
     name: 'Compleet Pakket',
-    subtitle: 'Onze meest gekozen route naar het rijbewijs (15 ritten van 100 min)',
+    subtitle: 'Onze meest gekozen route naar het rijbewijs',
     price: 1995,
     lessons_count: 30,
     features: [
-      '30 rijlessen van 50 min (15 blokuren van 100 min)',
+      '30 rijlessen',
       'CBR Tussentijdse Toets (TTT) inbegrepen',
       'CBR Praktijkexamen inbegrepen',
       'Volledige online theoriecursus + oefenexamens',
@@ -53,11 +53,11 @@ export const DEFAULT_PACKAGES = [
   {
     id: 'default-3',
     name: 'ZekerSlagen Pakket',
-    subtitle: 'Extra rust en ruimte om in je eigen tempo te leren (20 ritten van 100 min)',
+    subtitle: 'Extra rust en ruimte om in je eigen tempo te leren',
     price: 2475,
     lessons_count: 40,
     features: [
-      '40 rijlessen van 50 min (20 blokuren van 100 min)',
+      '40 rijlessen',
       'CBR Tussentijdse Toets (TTT) inbegrepen',
       'CBR Praktijkexamen inbegrepen',
       '1x CBR Herexamen garantie inbegrepen',

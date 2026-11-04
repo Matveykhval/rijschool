@@ -250,7 +250,7 @@ export default function Home() {
               Lespakketten zonder kleine lettertjes
             </h2>
             <p className="text-slate-600 mt-3 text-base">
-              1 rijles duurt <strong>50 minuten</strong> en we rijden altijd in <strong>blokuren van 2 lessen achter elkaar (100 minuten per rit)</strong>. Bij een pakket van 40 lessen rijd je dus 20 keer een volledig blokuur van 100 minuten.
+              Twijfel je welk pakket bij je past? Na de proefles geef ik je een eerlijk advies. Betalen in termijnen is zonder extra kosten mogelijk.
             </p>
           </div>
 
@@ -267,7 +267,6 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
               {packages.map((pkg) => {
                 const featureList = Array.isArray(pkg.features) ? pkg.features : [];
-                const blockHoursCount = Math.floor(Number(pkg.lessons_count) / 2);
                 return (
                   <div
                     key={pkg.id}
@@ -287,7 +286,7 @@ export default function Home() {
                       <div className="flex items-baseline justify-between gap-2">
                         <h3 className="text-xl font-extrabold text-slate-900">{pkg.name}</h3>
                         <span className="text-xs font-bold text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded">
-                          {pkg.lessons_count} lessen ({blockHoursCount}x 100 min)
+                          {pkg.lessons_count} lessen
                         </span>
                       </div>
 
@@ -300,7 +299,7 @@ export default function Home() {
                           € {Number(pkg.price).toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
                         </span>
                         <span className="text-xs text-slate-500 block mt-1">
-                          {pkg.lessons_count} lessen van 50 min ({blockHoursCount} ritten van 100 min) &bull; Incl. CBR examen
+                          Inclusief CBR praktijkexamen &bull; Geen inschrijfkosten
                         </span>
                       </div>
 
