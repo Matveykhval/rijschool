@@ -1,7 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl =
+  import.meta.env.VITE_SUPABASE_URL || 'https://hpkrcviezcinqzhjzjzb.supabase.co';
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  'sb_publishable_cqZE8Ofq154Ag2ABUuY4TQ_6X9YqViZ';
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
@@ -9,17 +12,11 @@ export const isSupabaseConfigured = Boolean(
   !supabaseUrl.includes('your-project-id')
 );
 
-if (!isSupabaseConfigured) {
-  console.warn(
-    'Supabase environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) are missing or using placeholder values. Falling back to local demo data until configured.'
-  );
-}
-
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-// Fallback packages shown only if Supabase env variables have not been set yet
+// Fallback packages shown only if the database table is empty or unreachable
 export const DEFAULT_PACKAGES = [
   {
     id: 'default-1',
@@ -70,4 +67,3 @@ export const DEFAULT_PACKAGES = [
     sort_order: 3,
   },
 ];
-
