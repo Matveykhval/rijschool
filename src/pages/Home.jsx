@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured, DEFAULT_PACKAGES } from '../lib/supabaseClient';
+import { useSiteSettings, SETTINGS_ROW_NAME } from '../lib/siteSettings';
 import BookingForm from '../components/BookingForm';
 import {
   Check,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const { settings } = useSiteSettings();
   const [packages, setPackages] = useState([]);
   const [loadingPackages, setLoadingPackages] = useState(true);
   const [selectedPackage, setSelectedPackage] = useState('');
@@ -26,6 +28,7 @@ export default function Home() {
           const { data, error } = await supabase
             .from('packages')
             .select('*')
+            .neq('name', SETTINGS_ROW_NAME)
             .order('sort_order', { ascending: true });
 
           if (error) throw error;
@@ -33,7 +36,9 @@ export default function Home() {
         } else {
           const savedLocal = localStorage.getItem('demo_packages');
           if (savedLocal) {
-            setPackages(JSON.parse(savedLocal));
+            setPackages(
+              JSON.parse(savedLocal).filter((p) => p.name !== SETTINGS_ROW_NAME)
+            );
           } else {
             localStorage.setItem('demo_packages', JSON.stringify(DEFAULT_PACKAGES));
             setPackages(DEFAULT_PACKAGES);
@@ -68,7 +73,7 @@ export default function Home() {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold uppercase tracking-wide">
                 <Award className="w-4 h-4 text-emerald-800" />
-                Hoog Slagingspercentage bij het CBR &bull; Rijschoolnr. 1085G9
+                {settings.stat_2_value} Slagingspercentage bij het CBR &bull; Rijschoolnr. {settings.cbr_number}
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
@@ -76,7 +81,7 @@ export default function Home() {
               </h1>
 
               <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-                Bij Rijschool KlaverDrive krijg je altijd les van dezelfde ervaren instructeur in een vaste, handgeschakelde Volkswagen Golf 8. Wij geven rijles in <strong>Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft en Wateringen</strong>.
+                Bij Rijschool KlaverDrive krijg je altijd les van dezelfde ervaren instructeur in een vaste {settings.car_model}. Wij geven rijles in <strong>{settings.service_areas}</strong>.
               </p>
 
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-sm font-medium text-slate-700">
@@ -86,7 +91,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle className="w-5 h-5 text-emerald-700 shrink-0" />
-                  Effectieve blokuren van 100 min (2x 50 min)
+                  Effectieve blokuren van {settings.block_lesson_minutes} min (2x {settings.single_lesson_minutes} min)
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle className="w-5 h-5 text-emerald-700 shrink-0" />
@@ -126,7 +131,7 @@ export default function Home() {
                   <div>
                     <p className="text-xs font-bold uppercase text-slate-500">Lesvoertuig</p>
                     <p className="text-sm font-bold text-slate-900">
-                      Volkswagen Golf 8 (Handgeschakeld)
+                      {settings.car_model}
                     </p>
                   </div>
                   <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded">
@@ -139,25 +144,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TRUST STATS BAR */}
+      {/* TRUST STATS BAR (All 4 numbers & labels editable in Admin) */}
       <section className="bg-emerald-900 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-emerald-800/60">
             <div className="px-2">
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">15+ jaar</div>
-              <div className="text-xs sm:text-sm text-emerald-100 mt-1">Ervaring als rijinstructeur</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                {settings.stat_1_value}
+              </div>
+              <div className="text-xs sm:text-sm text-emerald-100 mt-1">
+                {settings.stat_1_label}
+              </div>
             </div>
             <div className="px-2">
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">88%</div>
-              <div className="text-xs sm:text-sm text-emerald-100 mt-1">Slaagt in één keer bij het CBR</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                {settings.stat_2_value}
+              </div>
+              <div className="text-xs sm:text-sm text-emerald-100 mt-1">
+                {settings.stat_2_label}
+              </div>
             </div>
             <div className="px-2">
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">100 min</div>
-              <div className="text-xs sm:text-sm text-emerald-100 mt-1">Blokuren (2 lessen van 50 min)</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                {settings.stat_3_value}
+              </div>
+              <div className="text-xs sm:text-sm text-emerald-100 mt-1">
+                {settings.stat_3_label}
+              </div>
             </div>
             <div className="px-2">
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">4.9 / 5</div>
-              <div className="text-xs sm:text-sm text-emerald-100 mt-1">Waardering van oud-leerlingen</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                {settings.stat_4_value}
+              </div>
+              <div className="text-xs sm:text-sm text-emerald-100 mt-1">
+                {settings.stat_4_label}
+              </div>
             </div>
           </div>
         </div>
@@ -179,7 +200,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-slate-900 text-base">Rijschool KlaverDrive</h3>
                     <p className="text-xs text-slate-500">
-                      WRM-gecertificeerd Rijinstructeur (CBR 1085G9)
+                      WRM-gecertificeerd Rijinstructeur (CBR {settings.cbr_number})
                     </p>
                   </div>
                   <span className="text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded">
@@ -201,11 +222,11 @@ export default function Home() {
               </div>
 
               <p className="text-slate-600 leading-relaxed">
-                “Autorijden leer je het snelst wanneer je je op je gemak voelt in de auto. Wij begeleiden leerlingen in <strong>Den Hoorn, Delft, Den Haag, Rijswijk, Nootdorp, Ypenburg en Wateringen</strong> stap voor stap naar hun rijbewijs — van zenuwachtige beginners tot leerlingen die willen overstappen.”
+                “Autorijden leer je het snelst wanneer je je op je gemak voelt in de auto. Wij begeleiden leerlingen in <strong>{settings.service_areas}</strong> stap voor stap naar hun rijbewijs — van zenuwachtige beginners tot leerlingen die willen overstappen.”
               </p>
 
               <p className="text-slate-600 leading-relaxed">
-                Wij werken bewust met <strong>blokuren van 100 minuten (2 aaneengesloten lessen van 50 minuten)</strong>. Zo gaat er geen kostbare tijd verloren aan heen- en terugrijden en heb je elke rit volop de tijd om verkeerssituaties en examenroutes rondom het CBR echt goed onder de knie te krijgen.
+                Wij werken bewust met <strong>blokuren van {settings.block_lesson_minutes} minuten (2 aaneengesloten lessen van {settings.single_lesson_minutes} minuten)</strong>. Zo gaat er geen kostbare tijd verloren aan heen- en terugrijden en heb je elke rit volop de tijd om verkeerssituaties en examenroutes rondom het CBR echt goed onder de knie te krijgen.
               </p>
 
               {/* Three Core Pillars: Patience, Safety, High Pass Rate */}
@@ -214,7 +235,7 @@ export default function Home() {
                   <HeartHandshake className="w-6 h-6 text-emerald-800 mb-2" />
                   <h4 className="font-bold text-slate-900 text-sm">Alle rust &amp; geduld</h4>
                   <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Fouten maken mag; daar zit dubbele bediening voor in de Golf 8. We oefenen net zo lang tot het vertrouwd voelt.
+                    Fouten maken mag; daar zit dubbele bediening voor in de auto. We oefenen net zo lang tot het vertrouwd voelt.
                   </p>
                 </div>
 
@@ -330,14 +351,17 @@ export default function Home() {
             </div>
           )}
 
-          {/* Explanation Box about 50/100 min lessons */}
+          {/* Explanation Box about 50/100 min lessons + Loose Rates */}
           <div className="mt-10 bg-emerald-50/70 border border-emerald-200 rounded-lg p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
+            <div className="space-y-1.5">
               <h4 className="font-bold text-slate-900 text-base">
-                Hoe werken onze lesuren van 50 en 100 minuten?
+                Hoe werken onze lesuren van {settings.single_lesson_minutes} en {settings.block_lesson_minutes} minuten?
               </h4>
-              <p className="text-sm text-slate-700 mt-1">
-                1 les duurt <strong>50 minuten</strong>, maar we plannen altijd <strong>2 lessen achter elkaar (1 blokuur = 100 minuten)</strong>. Zo leer je sneller en heb je minder ritten nodig om klaar te zijn voor het CBR-examen.
+              <p className="text-sm text-slate-700">
+                1 les duurt <strong>{settings.single_lesson_minutes} minuten</strong>, maar we plannen altijd <strong>2 lessen achter elkaar (1 blokuur = {settings.block_lesson_minutes} minuten)</strong>. Zo leer je sneller en heb je minder ritten nodig om klaar te zijn voor het CBR-examen.
+              </p>
+              <p className="text-xs text-slate-600 pt-1">
+                Losse rijles ({settings.single_lesson_minutes} min): <strong>€ {settings.single_lesson_price},-</strong> &bull; Los CBR Praktijkexamen: <strong>€ {settings.exam_price},-</strong> &bull; Tussentijdse Toets: <strong>€ {settings.ttt_price},-</strong>
               </p>
             </div>
             <a
@@ -369,7 +393,7 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Aanmelden via de website</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Vul hieronder je gegevens en voorkeursmoment in. Ik bel of app je binnen 24 uur om de afspraak en de ophaallocatie te bevestigen.
+                Vul hieronder je gegevens en voorkeursmoment in. Ik bel of app je binnen {settings.response_time_hours} uur om de afspraak en de ophaallocatie te bevestigen.
               </p>
             </div>
 
@@ -377,9 +401,9 @@ export default function Home() {
               <div className="w-8 h-8 rounded bg-emerald-900 text-white font-bold flex items-center justify-center text-sm mb-4">
                 2
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2">Kennismakingsles in de Golf 8</h3>
+              <h3 className="font-bold text-slate-900 text-lg mb-2">Kennismakingsles in de auto</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Ik haal je thuis op in Den Hoorn, Delft, Den Haag, Rijswijk, Nootdorp, Ypenburg of Wateringen. Je gaat direct zelf achter het stuur om te ervaren hoe het rijden werkt.
+                Ik haal je thuis op in {settings.service_areas}. Je gaat direct zelf achter het stuur om te ervaren hoe het rijden werkt.
               </p>
             </div>
 
@@ -389,7 +413,7 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Persoonlijk lesadvies</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Na afloop bespreken we hoeveel lessen (blokuren van 100 min) je naar verwachting nodig hebt. Kies je voor een pakket? Dan is de proefles helemaal gratis.
+                Na afloop bespreken we hoeveel lessen (blokuren van {settings.block_lesson_minutes} min) je naar verwachting nodig hebt. Kies je voor een pakket? Dan is de proefles helemaal gratis.
               </p>
             </div>
           </div>
@@ -421,16 +445,16 @@ export default function Home() {
                 <ul className="space-y-2.5 text-sm text-slate-700">
                   <li className="flex items-start gap-2.5">
                     <Car className="w-4 h-4 text-emerald-800 shrink-0 mt-1" />
-                    <span>Handgeschakelde Volkswagen Golf 8 &bull; Geen wachttijd</span>
+                    <span>{settings.car_model} &bull; Geen wachttijd</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Clock className="w-4 h-4 text-emerald-800 shrink-0 mt-1" />
-                    <span>1 les = 50 min, altijd gereden in blokuren van 100 min (2 lessen)</span>
+                    <span>1 les = {settings.single_lesson_minutes} min, altijd gereden in blokuren van {settings.block_lesson_minutes} min (2 lessen)</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <MapPin className="w-4 h-4 text-emerald-800 shrink-0 mt-1" />
                     <span>
-                      <strong>Lesgebied:</strong> Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft &amp; Wateringen
+                      <strong>Lesgebied:</strong> {settings.service_areas}
                     </span>
                   </li>
                 </ul>
@@ -444,11 +468,11 @@ export default function Home() {
                   Tijdens rijlessen neem ik de telefoon niet op voor de veiligheid van mijn leerling. Stuur gerust een WhatsAppje of spreek de voicemail in, dan bel ik je tussen de lessen door terug!
                 </p>
                 <a
-                  href="tel:0624819032"
+                  href={`tel:${settings.phone_raw}`}
                   className="mt-4 inline-flex items-center gap-2 text-base font-extrabold text-white hover:text-amber-400"
                 >
                   <Phone className="w-4 h-4 text-amber-400" />
-                  06 - 24 81 90 32
+                  {settings.phone_display}
                 </a>
               </div>
             </div>

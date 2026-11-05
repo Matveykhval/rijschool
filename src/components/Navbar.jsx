@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Phone, Menu, X, ShieldCheck } from 'lucide-react';
+import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { settings } = useSiteSettings();
 
   const scrollToSection = (id) => {
     setMobileMenuOpen(false);
@@ -24,20 +26,20 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 font-medium text-white">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              CBR Erkend Opleider (Rijschoolnr. 1085G9)
+              CBR Erkend Opleider (Rijschoolnr. {settings.cbr_number})
             </span>
             <span className="hidden md:inline text-emerald-700">|</span>
             <span className="hidden md:inline text-emerald-100">
-              Regio Delft, Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg &amp; Wateringen
+              Regio {settings.service_areas}
             </span>
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="tel:0624819032"
+              href={`tel:${settings.phone_raw}`}
               className="flex items-center gap-1.5 hover:text-amber-400 transition-colors font-medium"
             >
               <Phone className="w-3.5 h-3.5 text-amber-400" />
-              Bel of WhatsApp: 06 - 24 81 90 32
+              Bel of WhatsApp: {settings.phone_display}
             </a>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { useSiteSettings } from '../lib/siteSettings';
 import { CheckCircle2, AlertCircle, Calendar, Send } from 'lucide-react';
 
 export default function BookingForm({ selectedPackageName }) {
+  const { settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -66,8 +68,7 @@ export default function BookingForm({ selectedPackageName }) {
 
       setStatus({
         type: 'success',
-        message:
-          'Bedankt voor je aanvraag! We hebben een bevestiging gestuurd naar je e-mailadres en nemen binnen 24 uur contact met je op om de proefles definitief in te plannen.',
+        message: `Bedankt voor je aanvraag! We hebben een bevestiging gestuurd naar je e-mailadres en nemen binnen ${settings.response_time_hours} uur contact met je op om de proefles definitief in te plannen.`,
       });
 
       setFormData({
@@ -82,8 +83,7 @@ export default function BookingForm({ selectedPackageName }) {
       console.error('Error submitting booking:', err);
       setStatus({
         type: 'error',
-        message:
-          'Er ging iets mis bij het versturen van je aanvraag. Probeer het opnieuw of bel/WhatsApp ons direct op 06 - 24 81 90 32.',
+        message: `Er ging iets mis bij het versturen van je aanvraag. Probeer het opnieuw of bel/WhatsApp ons direct op ${settings.phone_display}.`,
       });
     } finally {
       setSubmitting(false);
@@ -210,7 +210,7 @@ export default function BookingForm({ selectedPackageName }) {
             rows={3}
             value={formData.message}
             onChange={handleChange}
-            placeholder="Bijv. woonplaats (Den Hoorn, Delft, Den Haag, Rijswijk, Nootdorp, Ypenburg of Wateringen) of eerdere rijervaring..."
+            placeholder={`Bijv. woonplaats (${settings.service_areas}) of eerdere rijervaring...`}
             className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
           />
         </div>

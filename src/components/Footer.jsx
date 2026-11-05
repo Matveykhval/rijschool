@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Lock } from 'lucide-react';
+import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Footer() {
+  const { settings } = useSiteSettings();
+
   return (
     <footer className="bg-emerald-950 text-slate-300 border-t border-emerald-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
@@ -18,10 +21,10 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-emerald-100/80 leading-relaxed mb-4">
-              Al meer dan 15 jaar een vertrouwd gezicht op de weg. Persoonlijke rijlessen in een rustige, veilige sfeer met een vaste instructeur in onze handgeschakelde Volkswagen Golf 8.
+              Persoonlijke rijlessen in een rustige, veilige sfeer met een vaste instructeur in onze {settings.car_model}.
             </p>
             <p className="text-xs text-emerald-300/70">
-              KvK: 68492014 &bull; CBR Rijschoolnummer: 1085G9
+              KvK: {settings.kvk_number} &bull; CBR Rijschoolnummer: {settings.cbr_number}
             </p>
           </div>
 
@@ -33,21 +36,21 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>06 - 24 81 90 32 (Bellen of WhatsApp)</span>
+                <span>{settings.phone_display} (Bellen of WhatsApp)</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>info@klaverdrive.nl</span>
+                <span>{settings.email}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
                 <span>
-                  <strong>Lesgebied:</strong> Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft &amp; Wateringen
+                  <strong>Lesgebied:</strong> {settings.service_areas}
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>Ma t/m Za: 08:00 – 21:00 uur</span>
+                <span>{settings.opening_hours}</span>
               </li>
             </ul>
           </div>
@@ -75,7 +78,7 @@ export default function Footer() {
                   rel="noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  Rijschool machtigen bij het CBR (nr. 1085G9)
+                  Rijschool machtigen bij het CBR (nr. {settings.cbr_number})
                 </a>
               </li>
               <li className="pt-3 border-t border-emerald-900">
@@ -93,7 +96,7 @@ export default function Footer() {
 
         <div className="border-t border-emerald-900 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-emerald-300/70 gap-4">
           <p>&copy; {new Date().getFullYear()} Rijschool KlaverDrive. Alle rechten voorbehouden.</p>
-          <p>Gecertificeerd WRM-instructeur &bull; CBR Rijschoolnr. 1085G9</p>
+          <p>Gecertificeerd WRM-instructeur &bull; CBR Rijschoolnr. {settings.cbr_number}</p>
         </div>
       </div>
     </footer>

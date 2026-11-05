@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, isSupabaseConfigured, DEFAULT_PACKAGES } from '../lib/supabaseClient';
 import {
+  useSiteSettings,
+  SETTINGS_ROW_NAME,
+  DEFAULT_SITE_SETTINGS,
+} from '../lib/siteSettings';
+import {
   Calendar,
   Package,
+  Sliders,
   LogOut,
   Check,
   X,
@@ -14,6 +20,7 @@ import {
   Mail,
   Clock,
   RefreshCw,
+  Save,
 } from 'lucide-react';
 
 const EMPTY_PACKAGE_FORM = {
@@ -30,6 +37,11 @@ const EMPTY_PACKAGE_FORM = {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('bookings');
+
+  // Global Site Settings (Stats bar, lesson minutes, loose prices, contact numbers)
+  const { settings, saveSettings, refreshSettings } = useSiteSettings();
+  const [settingsForm, setSettingsForm] = useState(DEFAULT_SITE_SETTINGS);
+  const [savingSettings, setSavingSettings] = useState(false);
 
   // Bookings State
   const [bookings, setBookings] = useState([]);
@@ -49,6 +61,12 @@ export default function AdminDashboard() {
     fetchBookings();
     fetchPackages();
   }, []);
+
+  useEffect(() => {
+    if (settings) {
+      setSettingsForm(settings);
+    }
+  }, [settings]);
 
   const showNotice = (msg) => {
     setFeedback(msg);
@@ -139,6 +157,7 @@ export default function AdminDashboard() {
         const { data, error } = await supabase
           .from('packages')
           .select('*')
+          .neq('name', SETTINGS_ROW_NAME)
           .order('sort_order', { ascending: true });
 
         if (error) throw error;
@@ -147,15 +166,25 @@ export default function AdminDashboard() {
           setPackages(data);
         } else {
           // Table is empty in Supabase — automatically seed the 3 default packages
-          const seedRows = DEFAULT_PACKAGES.map(({ name, subtitle, price, lessons_count, features, is_popular, sort_order }) => ({
-            name,
-            subtitle,
-            price,
-            lessons_count,
-            features,
-            is_popular,
-            sort_order,
-          }));
+          const seedRows = DEFAULT_PACKAGES.map(
+            ({
+              name,
+              subtitle,
+              price,
+              lessons_count,
+              features,
+              is_popular,
+              sort_order,
+            }) => ({
+              name,
+              subtitle,
+              price,
+              lessons_count,
+              features,
+              is_popular,
+              sort_order,
+            })
+          );
           const { data: inserted, error: seedError } = await supabase
             .from('packages')
             .insert(seedRows)
@@ -170,7 +199,7 @@ export default function AdminDashboard() {
       } else {
         const local = JSON.parse(
           localStorage.getItem('demo_packages') || JSON.stringify(DEFAULT_PACKAGES)
-        );
+        ).filter((p) => p.name !== SETTINGS_ROW_NAME);
         setPackages(local);
       }
     } catch (err) {
@@ -227,7 +256,11 @@ export default function AdminDashboard() {
 
     try {
       if (isSupabaseConfigured && supabase) {
-        if (isEditingPackage && pkgForm.id && !String(pkgForm.id).startsWith('default-')) {
+        if (
+          isEditingPackage &&
+          pkgForm.id &&
+          !String(pkgForm.id).startsWith('default-')
+        ) {
           const { error } = await supabase
             .from('packages')
             .update(payload)
@@ -245,10 +278,7 @@ export default function AdminDashboard() {
             p.id === pkgForm.id ? { ...p, ...payload } : p
           );
         } else {
-          updatedList = [
-            ...packages,
-            { id: crypto.randomUUID(), ...payload },
-          ];
+          updatedList = [...packages, { id: crypto.randomUUID(), ...payload }];
         }
         localStorage.setItem('demo_packages', JSON.stringify(updatedList));
         setPackages(updatedList);
@@ -287,6 +317,28 @@ export default function AdminDashboard() {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // SITE SETTINGS SAVE (Stats bar, lesson minutes, loose prices, contact info)
+  // ---------------------------------------------------------------------------
+  function handleSettingsChange(e) {
+    const { name, value } = e.target;
+    setSettingsForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSaveSiteSettings(e) {
+    e.preventDefault();
+    setSavingSettings(true);
+    try {
+      await saveSettings(settingsForm);
+      showNotice('Website cijfers en instellingen zijn direct opgeslagen!');
+    } catch (err) {
+      console.error('Error saving site settings:', err);
+      alert('Kon instellingen niet opslaan. Controleer uw verbinding.');
+    } finally {
+      setSavingSettings(false);
+    }
+  }
+
   async function handleSignOut() {
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
@@ -312,7 +364,7 @@ export default function AdminDashboard() {
               Beheerpaneel Rijschool KlaverDrive
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              Overzicht van binnengekomen proefles-aanvragen en actuele lespakketten
+              Beheer proefles-aanvragen, lespakketten en alle cijfers op de website
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -321,6 +373,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 fetchBookings();
                 fetchPackages();
+                refreshSettings();
                 showNotice('Gegevens ververst.');
               }}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700"
@@ -347,7 +400,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 mb-6 gap-2">
+        <div className="flex flex-wrap border-b border-slate-200 mb-6 gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('bookings')}
@@ -377,6 +430,19 @@ export default function AdminDashboard() {
           >
             <Package className="w-4 h-4" />
             Lespakketten &amp; Prijzen ({packages.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('settings')}
+            className={`inline-flex items-center gap-2 px-5 py-3 font-bold text-sm border-b-2 transition-colors ${
+              activeTab === 'settings'
+                ? 'border-emerald-800 text-emerald-900 bg-white rounded-t-md'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Sliders className="w-4 h-4" />
+            Website Cijfers &amp; Gegevens
           </button>
         </div>
 
@@ -465,9 +531,7 @@ export default function AdminDashboard() {
                             {statusLabel}
                           </span>
                           <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                            {booking.transmission === 'automaat'
-                              ? 'Automaat'
-                              : 'Schakelauto'}
+                            Schakelauto
                           </span>
                         </div>
 
@@ -741,7 +805,7 @@ export default function AdminDashboard() {
                           setPkgForm({ ...pkgForm, featuresText: e.target.value })
                         }
                         placeholder={
-                          '30 rijlessen van 50 min (15 blokuren van 100 min)\nCBR Praktijkexamen inbegrepen\nVaste instructeur'
+                          '30 rijlessen\nCBR Praktijkexamen inbegrepen\nVaste instructeur'
                         }
                         className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
                       />
@@ -781,8 +845,387 @@ export default function AdminDashboard() {
             )}
           </div>
         )}
+
+        {/* ================================================================= */}
+        {/* TAB 3: WEBSITE NUMBERS, STATS BAR & CONTACT SETTINGS              */}
+        {/* ================================================================= */}
+        {activeTab === 'settings' && (
+          <form onSubmit={handleSaveSiteSettings} className="space-y-6">
+            {/* Section 1: Green Stats Bar */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <div className="mb-4 pb-3 border-b border-slate-100">
+                <h2 className="text-base font-extrabold text-slate-900">
+                  1. Groene Statistiekenbalk (Ervaring, Slagingspercentage, Lesduur &amp; Rating)
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Pas hier de 4 grote gele cijfers en de bijbehorende onderschriften in de groene balk op de voorpagina aan.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Stat 1 */}
+                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 space-y-3">
+                  <span className="text-xs font-bold uppercase text-emerald-800">
+                    Blok 1 (Ervaring)
+                  </span>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Groot Getal / Tekst
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_1_value"
+                      value={settingsForm.stat_1_value}
+                      onChange={handleSettingsChange}
+                      placeholder="15+ jaar"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Onderschrift
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_1_label"
+                      value={settingsForm.stat_1_label}
+                      onChange={handleSettingsChange}
+                      placeholder="Ervaring als rijinstructeur"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Stat 2 */}
+                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 space-y-3">
+                  <span className="text-xs font-bold uppercase text-emerald-800">
+                    Blok 2 (Slagingspercentage)
+                  </span>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Groot Getal / Percentage
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_2_value"
+                      value={settingsForm.stat_2_value}
+                      onChange={handleSettingsChange}
+                      placeholder="88%"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Onderschrift
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_2_label"
+                      value={settingsForm.stat_2_label}
+                      onChange={handleSettingsChange}
+                      placeholder="Slaagt in één keer bij het CBR"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Stat 3 */}
+                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 space-y-3">
+                  <span className="text-xs font-bold uppercase text-emerald-800">
+                    Blok 3 (Blokuur / Lesduur)
+                  </span>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Groot Getal / Minuten
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_3_value"
+                      value={settingsForm.stat_3_value}
+                      onChange={handleSettingsChange}
+                      placeholder="100 min"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Onderschrift
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_3_label"
+                      value={settingsForm.stat_3_label}
+                      onChange={handleSettingsChange}
+                      placeholder="Blokuren (2 lessen van 50 min)"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Stat 4 */}
+                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 space-y-3">
+                  <span className="text-xs font-bold uppercase text-emerald-800">
+                    Blok 4 (Beoordeling / Rating)
+                  </span>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Groot Getal / Score
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_4_value"
+                      value={settingsForm.stat_4_value}
+                      onChange={handleSettingsChange}
+                      placeholder="4.9 / 5"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Onderschrift
+                    </label>
+                    <input
+                      type="text"
+                      name="stat_4_label"
+                      value={settingsForm.stat_4_label}
+                      onChange={handleSettingsChange}
+                      placeholder="Waardering van oud-leerlingen"
+                      className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Lesson Duration & Loose Prices */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <div className="mb-4 pb-3 border-b border-slate-100">
+                <h2 className="text-base font-extrabold text-slate-900">
+                  2. Lesduur (Minuten) &amp; Losse Tarieven (€)
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Alle losse prijzen en lesminuten die door de hele website heen worden genoemd.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Duur 1 losse les (minuten)
+                  </label>
+                  <input
+                    type="text"
+                    name="single_lesson_minutes"
+                    value={settingsForm.single_lesson_minutes}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Duur blokuur / 2 lessen (minuten)
+                  </label>
+                  <input
+                    type="text"
+                    name="block_lesson_minutes"
+                    value={settingsForm.block_lesson_minutes}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Reactietijd op aanvraag (uren)
+                  </label>
+                  <input
+                    type="text"
+                    name="response_time_hours"
+                    value={settingsForm.response_time_hours}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Prijs losse rijles (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="single_lesson_price"
+                    value={settingsForm.single_lesson_price}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Prijs los CBR Praktijkexamen (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="exam_price"
+                    value={settingsForm.exam_price}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Prijs Tussentijdse Toets (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="ttt_price"
+                    value={settingsForm.ttt_price}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Contact Numbers, CBR, KvK & Service Area */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <div className="mb-4 pb-3 border-b border-slate-100">
+                <h2 className="text-base font-extrabold text-slate-900">
+                  3. Rijschoolnummers, Telefoon, Lesauto &amp; Lesgebied
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Deze gegevens worden getoond in de bovenbalk, op de voorpagina en in de footer.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Telefoonnummer (Zichtbare weergave)
+                  </label>
+                  <input
+                    type="text"
+                    name="phone_display"
+                    value={settingsForm.phone_display}
+                    onChange={handleSettingsChange}
+                    placeholder="06 - 24 81 90 32"
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Telefoonnummer (Alleen cijfers voor doorklik-bellen)
+                  </label>
+                  <input
+                    type="text"
+                    name="phone_raw"
+                    value={settingsForm.phone_raw}
+                    onChange={handleSettingsChange}
+                    placeholder="0624819032"
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    CBR Rijschoolnummer
+                  </label>
+                  <input
+                    type="text"
+                    name="cbr_number"
+                    value={settingsForm.cbr_number}
+                    onChange={handleSettingsChange}
+                    placeholder="1085G9"
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    KvK-nummer
+                  </label>
+                  <input
+                    type="text"
+                    name="kvk_number"
+                    value={settingsForm.kvk_number}
+                    onChange={handleSettingsChange}
+                    placeholder="68492014"
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    E-mailadres
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={settingsForm.email}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Openingstijden / Lestijden
+                  </label>
+                  <input
+                    type="text"
+                    name="opening_hours"
+                    value={settingsForm.opening_hours}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Lesvoertuig
+                  </label>
+                  <input
+                    type="text"
+                    name="car_model"
+                    value={settingsForm.car_model}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Lesgebied (Steden / Dorpen)
+                  </label>
+                  <input
+                    type="text"
+                    name="service_areas"
+                    value={settingsForm.service_areas}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 text-white font-bold px-6 py-3 rounded-md shadow-sm transition-colors text-sm"
+              >
+                <Save className="w-4 h-4" />
+                {savingSettings
+                  ? 'Bezig met opslaan...'
+                  : 'Alle Cijfers & Gegevens Opslaan'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
 }
-
