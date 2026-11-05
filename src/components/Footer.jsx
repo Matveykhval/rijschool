@@ -62,14 +62,28 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="#proefles" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('proefles');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="hover:text-white transition-colors text-left cursor-pointer"
+                >
                   Vrijblijvende proefles aanvragen
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#pakketten" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('pakketten');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="hover:text-white transition-colors text-left cursor-pointer"
+                >
                   Lespakketten &amp; losse tarieven
-                </a>
+                </button>
               </li>
               <li>
                 <a

@@ -11,7 +11,6 @@ export default function Navbar() {
 
   const scrollToSection = (id) => {
     setMobileMenuOpen(false);
-    if (!isHome) return;
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });

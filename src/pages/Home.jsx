@@ -55,12 +55,16 @@ export default function Home() {
     fetchPackages();
   }, []);
 
-  const handleChoosePackage = (pkgName) => {
-    setSelectedPackage(pkgName);
-    const el = document.getElementById('proefles');
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleChoosePackage = (pkgName) => {
+    setSelectedPackage(pkgName);
+    scrollTo('proefles');
   };
 
   return (
@@ -104,18 +108,20 @@ export default function Home() {
               </ul>
 
               <div className="pt-3 flex flex-col sm:flex-row gap-4">
-                <a
-                  href="#proefles"
-                  className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-bold px-7 py-4 rounded-md shadow-sm transition-colors text-base"
+                <button
+                  type="button"
+                  onClick={() => scrollTo('proefles')}
+                  className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-bold px-7 py-4 rounded-md shadow-sm transition-colors text-base cursor-pointer"
                 >
                   Boek een Proefles
-                </a>
-                <a
-                  href="#pakketten"
-                  className="inline-flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-6 py-4 rounded-md border border-slate-300 transition-colors text-base"
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('pakketten')}
+                  className="inline-flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-6 py-4 rounded-md border border-slate-300 transition-colors text-base cursor-pointer"
                 >
                   Bekijk Lespakketten
-                </a>
+                </button>
               </div>
             </div>
 
@@ -364,12 +370,13 @@ export default function Home() {
                 Losse rijles ({settings.single_lesson_minutes} min): <strong>€ {settings.single_lesson_price},-</strong> &bull; Los CBR Praktijkexamen: <strong>€ {settings.exam_price},-</strong> &bull; Tussentijdse Toets: <strong>€ {settings.ttt_price},-</strong>
               </p>
             </div>
-            <a
-              href="#proefles"
-              className="text-sm font-bold text-emerald-900 hover:underline shrink-0"
+            <button
+              type="button"
+              onClick={() => scrollTo('proefles')}
+              className="text-sm font-bold text-emerald-900 hover:underline shrink-0 text-left cursor-pointer"
             >
               Plan je proefles &rarr;
-            </a>
+            </button>
           </div>
         </div>
       </section>
