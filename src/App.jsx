@@ -12,25 +12,34 @@ export default function App() {
   return (
     <SiteSettingsProvider>
       <HashRouter>
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <Routes>
+          {/* Public Customer Website (with Navbar & Footer) */}
+          <Route
+            path="/"
+            element={
+              <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+                <Navbar />
+                <main className="flex-grow">
+                  <Home />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+
+          {/* Standalone Admin Routes (No customer Navbar or Footer) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </HashRouter>
     </SiteSettingsProvider>
   );

@@ -11,7 +11,7 @@ export const DEFAULT_SITE_SETTINGS = {
   stat_2_label: 'Slaagt in één keer bij het CBR',
   stat_3_value: '100 min',
   stat_3_label: 'Blokuren (2 lessen van 50 min)',
-  stat_4_value: '4.9 / 5',
+  stat_4_value: '5/5',
   stat_4_label: 'Waardering van oud-leerlingen',
 
   // Lesduur & Losse Tarieven (in €)
@@ -27,12 +27,28 @@ export const DEFAULT_SITE_SETTINGS = {
   phone_raw: '0624819032',
   email: 'info@klaverdrive.nl',
   cbr_number: '1085G9',
-  kvk_number: '68492014',
+  kvk_number: '92860605',
   opening_hours: 'Ma t/m Za: 08:00 – 21:00 uur',
   car_model: 'Volkswagen Golf 8 (Handgeschakeld)',
   service_areas:
     'Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft en Wateringen',
 };
+
+function getInitialSettings() {
+  try {
+    const cached = localStorage.getItem('demo_site_settings');
+    if (cached) {
+      return {
+        ...DEFAULT_SITE_SETTINGS,
+        ...JSON.parse(cached),
+        stat_4_value: '5/5',
+      };
+    }
+  } catch {
+    // ignore storage errors
+  }
+  return DEFAULT_SITE_SETTINGS;
+}
 
 const SiteSettingsContext = createContext({
   settings: DEFAULT_SITE_SETTINGS,
@@ -42,7 +58,7 @@ const SiteSettingsContext = createContext({
 });
 
 export function SiteSettingsProvider({ children }) {
-  const [settings, setSettings] = useState(DEFAULT_SITE_SETTINGS);
+  const [settings, setSettings] = useState(getInitialSettings);
   const [loadingSettings, setLoadingSettings] = useState(true);
 
   const fetchSettings = async () => {
@@ -55,18 +71,20 @@ export function SiteSettingsProvider({ children }) {
           .eq('name', SETTINGS_ROW_NAME)
           .maybeSingle();
 
-        if (!error && data && data.features && typeof data.features === 'object' && !Array.isArray(data.features)) {
-          setSettings({ ...DEFAULT_SITE_SETTINGS, ...data.features });
-        } else {
-          const local = localStorage.getItem('demo_site_settings');
-          if (local) {
-            setSettings({ ...DEFAULT_SITE_SETTINGS, ...JSON.parse(local) });
-          }
-        }
-      } else {
-        const local = localStorage.getItem('demo_site_settings');
-        if (local) {
-          setSettings({ ...DEFAULT_SITE_SETTINGS, ...JSON.parse(local) });
+        if (
+          !error &&
+          data &&
+          data.features &&
+          typeof data.features === 'object' &&
+          !Array.isArray(data.features)
+        ) {
+          const merged = {
+            ...DEFAULT_SITE_SETTINGS,
+            ...data.features,
+            stat_4_value: '5/5',
+          };
+          setSettings(merged);
+          localStorage.setItem('demo_site_settings', JSON.stringify(merged));
         }
       }
     } catch (err) {
@@ -81,7 +99,11 @@ export function SiteSettingsProvider({ children }) {
   }, []);
 
   const saveSettings = async (newSettings) => {
-    const merged = { ...DEFAULT_SITE_SETTINGS, ...newSettings };
+    const merged = {
+      ...DEFAULT_SITE_SETTINGS,
+      ...newSettings,
+      stat_4_value: '5/5',
+    };
     localStorage.setItem('demo_site_settings', JSON.stringify(merged));
 
     if (isSupabaseConfigured && supabase) {
@@ -133,4 +155,3 @@ export function SiteSettingsProvider({ children }) {
 export function useSiteSettings() {
   return useContext(SiteSettingsContext);
 }
-
