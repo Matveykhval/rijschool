@@ -198,7 +198,7 @@ export default function Home() {
             <div className="lg:col-span-5">
               <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
                 <img
-                  src="/auto.jpg"
+                  src="./auto.jpg"
                   alt="Rijinstructeur bij Rijschool KlaverDrive"
                   className="w-full h-80 sm:h-96 object-cover rounded"
                 />
