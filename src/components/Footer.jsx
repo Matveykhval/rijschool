@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Clock, Lock } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Lock, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Footer() {
@@ -41,6 +41,17 @@ export default function Footer() {
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
                 <span>{settings.email}</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Instagram className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
+                <a
+                  href="https://www.instagram.com/rijschoolklaverdrive/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Instagram: @rijschoolklaverdrive
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
