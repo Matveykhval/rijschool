@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Phone, Menu, X, ShieldCheck } from 'lucide-react';
+import { Phone, Menu, X, ShieldCheck, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Navbar() {
@@ -20,25 +20,35 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
       {/* Top utility bar - dark green theme */}
-      <div className="bg-emerald-950 text-slate-200 text-xs py-2 px-4">
+      <div className="bg-emerald-950 text-slate-200 text-xs py-2 px-4 border-b border-emerald-900/60">
         <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 font-medium text-white">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 font-semibold text-white">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              CBR Erkend Opleider (Rijschoolnr. {settings.cbr_number})
+              CBR Erkend Opleider
             </span>
-            <span className="hidden md:inline text-emerald-700">|</span>
-            <span className="hidden md:inline text-emerald-100">
+            <span className="hidden lg:inline text-emerald-700">|</span>
+            <span className="hidden lg:inline text-emerald-100/90">
               Regio {settings.service_areas}
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <a
+              href="https://www.instagram.com/rijschoolklaverdrive/"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 text-emerald-100 hover:text-amber-400 transition-colors font-medium"
+            >
+              <Instagram className="w-3.5 h-3.5 text-amber-400" />
+              <span>@rijschoolklaverdrive</span>
+            </a>
+            <span className="text-emerald-700 hidden sm:inline">|</span>
             <a
               href={`tel:${settings.phone_raw}`}
-              className="flex items-center gap-1.5 hover:text-amber-400 transition-colors font-medium"
+              className="flex items-center gap-1.5 text-white hover:text-amber-400 transition-colors font-medium"
             >
               <Phone className="w-3.5 h-3.5 text-amber-400" />
-              Bel of WhatsApp: {settings.phone_display}
+              <span>Bel of WhatsApp: {settings.phone_display}</span>
             </a>
           </div>
         </div>
