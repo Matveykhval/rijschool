@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { SiteSettingsProvider } from './lib/siteSettings';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import LegalAndCookies from './components/LegalAndCookies';
 import Home from './pages/Home';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
@@ -23,6 +24,7 @@ export default function App() {
                   <Home />
                 </main>
                 <Footer />
+                <LegalAndCookies />
               </div>
             }
           />

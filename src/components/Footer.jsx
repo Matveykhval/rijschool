@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, MessageCircle, Mail, MapPin, Clock, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
+import { openLegalModal } from './LegalAndCookies';
 
 export default function Footer() {
   const { settings } = useSiteSettings();
@@ -130,9 +131,27 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-emerald-900 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-emerald-300/70 gap-4">
+        <div className="border-t border-emerald-900 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-emerald-300/70 gap-4">
           <p>&copy; {new Date().getFullYear()} Rijschool KlaverDrive. Alle rechten voorbehouden.</p>
-          <p>Gecertificeerd WRM-instructeur &bull; CBR Rijschoolnr. {settings.cbr_number}</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => openLegalModal('privacy')}
+              className="hover:text-white transition-colors underline underline-offset-2 cursor-pointer"
+            >
+              Privacy- &amp; Cookieverklaring
+            </button>
+            <span>&bull;</span>
+            <button
+              type="button"
+              onClick={() => openLegalModal('terms')}
+              className="hover:text-white transition-colors underline underline-offset-2 cursor-pointer"
+            >
+              Algemene Voorwaarden
+            </button>
+            <span className="hidden sm:inline">&bull;</span>
+            <span className="hidden sm:inline">CBR Rijschoolnr. {settings.cbr_number}</span>
+          </div>
         </div>
       </div>
     </footer>

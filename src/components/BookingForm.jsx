@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { useSiteSettings } from '../lib/siteSettings';
+import { openLegalModal } from './LegalAndCookies';
 import { CheckCircle2, AlertCircle, Calendar, Send } from 'lucide-react';
 
 export default function BookingForm({ selectedPackageName }) {
@@ -243,8 +244,24 @@ export default function BookingForm({ selectedPackageName }) {
           {submitting ? 'Aanvraag wordt verstuurd...' : 'Proefles Aanvragen'}
         </button>
 
-        <p className="text-xs text-slate-500 text-center">
-          Je zit nergens aan vast. Na de proefles krijg je eerlijk advies over hoeveel lessen je ongeveer nodig hebt.
+        <p className="text-xs text-slate-500 text-center leading-relaxed">
+          Je zit nergens aan vast. Wij gaan zorgvuldig om met je gegevens volgens onze{' '}
+          <button
+            type="button"
+            onClick={() => openLegalModal('privacy')}
+            className="text-emerald-800 font-semibold hover:underline cursor-pointer"
+          >
+            Privacyverklaring
+          </button>{' '}
+          en{' '}
+          <button
+            type="button"
+            onClick={() => openLegalModal('terms')}
+            className="text-emerald-800 font-semibold hover:underline cursor-pointer"
+          >
+            Algemene Voorwaarden
+          </button>
+          .
         </p>
       </form>
     </div>
