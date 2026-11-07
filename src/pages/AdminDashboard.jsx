@@ -394,7 +394,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <Sliders className="w-3.5 h-3.5" />
-                Gegevens &amp; Tarieven
+                Statistieken
               </button>
             </nav>
           </div>
@@ -817,19 +817,15 @@ export default function AdminDashboard() {
         )}
 
         {/* ================================================================= */}
-        {/* TAB 3: ESSENTIAL SETTINGS ONLY                                    */}
+        {/* TAB 3: STATISTIEKEN ONLY                                          */}
         {/* ================================================================= */}
         {activeTab === 'settings' && (
-          <form onSubmit={handleSaveSiteSettings} className="max-w-3xl space-y-5">
+          <form onSubmit={handleSaveSiteSettings} className="max-w-xl space-y-5">
             <h1 className="text-lg font-bold text-slate-900">
-              Gegevens &amp; Losse Tarieven
+              Statistieken (Groene Balk)
             </h1>
 
-            {/* Statistieken: Alleen Ervaring & Slagingspercentage */}
             <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
-                Statistieken (Groene Balk)
-              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -852,152 +848,6 @@ export default function AdminDashboard() {
                     type="text"
                     name="stat_2_value"
                     value={settingsForm.stat_2_value}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Losse Tarieven */}
-            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
-                Losse Tarieven (€)
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Losse rijles (€)
-                  </label>
-                  <input
-                    type="text"
-                    name="single_lesson_price"
-                    value={settingsForm.single_lesson_price}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    CBR Praktijkexamen (€)
-                  </label>
-                  <input
-                    type="text"
-                    name="exam_price"
-                    value={settingsForm.exam_price}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Tussentijdse Toets (€)
-                  </label>
-                  <input
-                    type="text"
-                    name="ttt_price"
-                    value={settingsForm.ttt_price}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Contact & Rijschool Gegevens */}
-            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
-                Contact &amp; Bedrijfsgegevens
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Telefoonnummer (Weergave)
-                  </label>
-                  <input
-                    type="text"
-                    name="phone_display"
-                    value={settingsForm.phone_display}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Telefoonnummer (Alleen cijfers voor bellen)
-                  </label>
-                  <input
-                    type="text"
-                    name="phone_raw"
-                    value={settingsForm.phone_raw}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    E-mailadres
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={settingsForm.email}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Openingstijden
-                  </label>
-                  <input
-                    type="text"
-                    name="opening_hours"
-                    value={settingsForm.opening_hours}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    CBR Rijschoolnummer
-                  </label>
-                  <input
-                    type="text"
-                    name="cbr_number"
-                    value={settingsForm.cbr_number}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    KvK-nummer
-                  </label>
-                  <input
-                    type="text"
-                    name="kvk_number"
-                    value={settingsForm.kvk_number}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Lesgebied (Steden / Dorpen)
-                  </label>
-                  <input
-                    type="text"
-                    name="service_areas"
-                    value={settingsForm.service_areas}
                     onChange={handleSettingsChange}
                     className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
                   />

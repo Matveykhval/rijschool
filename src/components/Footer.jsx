@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Clock, Lock, Instagram } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Footer() {
@@ -105,15 +104,6 @@ export default function Footer() {
                 >
                   Rijschool machtigen bij het CBR (nr. {settings.cbr_number})
                 </a>
-              </li>
-              <li className="pt-3 border-t border-emerald-900">
-                <Link
-                  to="/admin"
-                  className="inline-flex items-center gap-1.5 text-xs text-emerald-300/80 hover:text-white transition-colors"
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  Instructeur Inloggen (Admin)
-                </Link>
               </li>
             </ul>
           </div>

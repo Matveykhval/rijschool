@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rijschool KlaverDrive</title>
+    <script>
+      // Redirect clean paths like /admin or /admin/login on GitHub Pages to HashRouter (#/admin)
+      (function () {
+        var path = window.location.pathname;
+        var search = window.location.search || '';
+        if (path && path !== '/') {
+          // Handle both custom domain (/admin) and repo subpath (/rijschool/admin)
+          var cleanPath = path.replace(/^\/rijschool/, '');
+          if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+          window.location.replace(window.location.origin + '/#' + cleanPath + search);
+        } else {
+          window.location.replace(window.location.origin + '/#/');
+        }
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
+
