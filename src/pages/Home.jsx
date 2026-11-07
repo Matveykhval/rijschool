@@ -19,6 +19,7 @@ export default function Home() {
   const [packages, setPackages] = useState([]);
   const [loadingPackages, setLoadingPackages] = useState(true);
   const [selectedPackage, setSelectedPackage] = useState('');
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   useEffect(() => {
     async function fetchPackages() {
@@ -389,20 +390,36 @@ export default function Home() {
                 q: 'Geven jullie rijles in een schakelauto of automaat?',
                 a: `Wij geven les in een moderne ${settings.car_model}. Wanneer je slaagt in een schakelauto, krijg je een volledig rijbewijs B waarmee je zowel in een handgeschakelde auto als in een automaat mag rijden.`,
               },
-            ].map((item, idx) => (
-              <details
-                key={idx}
-                className="group bg-slate-50 border border-slate-200 rounded-lg p-5 open:bg-white open:shadow-sm transition-all"
-              >
-                <summary className="flex items-center justify-between cursor-pointer list-none font-bold text-slate-900 text-sm sm:text-base">
-                  <span>{item.q}</span>
-                  <ChevronDown className="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180 shrink-0 ml-4" />
-                </summary>
-                <p className="text-sm text-slate-600 mt-3 leading-relaxed">
-                  {item.a}
-                </p>
-              </details>
-            ))}
+            ].map((item, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`border border-slate-200 rounded-lg transition-all ${
+                    isOpen ? 'bg-white shadow-sm' : 'bg-slate-50'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center justify-between text-left p-5 cursor-pointer font-bold text-slate-900 text-sm sm:text-base"
+                  >
+                    <span>{item.q}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-500 transition-transform shrink-0 ml-4 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 pb-5 -mt-2 text-sm text-slate-600 leading-relaxed">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
