@@ -69,9 +69,9 @@ serve(async (req: Request) => {
         subject: "Bevestiging van je proefles aanvraag – Rijschool KlaverDrive",
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; max-width: 580px; margin: 0 auto; line-height: 1.6;">
-            <div style="background-color: #1e3a8a; color: #ffffff; padding: 24px; border-radius: 8px 8px 0 0;">
+            <div style="background-color: #064e3b; color: #ffffff; padding: 24px; border-radius: 8px 8px 0 0;">
               <h1 style="margin: 0; font-size: 20px;">Rijschool KlaverDrive</h1>
-              <p style="margin: 4px 0 0; font-size: 14px; color: #dbeafe;">Bedankt voor je proefles aanvraag!</p>
+              <p style="margin: 4px 0 0; font-size: 14px; color: #d1fae5;">Bedankt voor je proefles aanvraag!</p>
             </div>
             <div style="border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
               <p>Beste <strong>${escapeHtml(booking.name)}</strong>,</p>
@@ -90,8 +90,8 @@ serve(async (req: Request) => {
                 }
               </div>
 
-              <p>Heb je in de tussentijd alvast een vraag? Je kunt altijd bellen of appen naar <strong>06 - 24 81 90 32</strong>.</p>
-              <p style="margin-top: 24px;">Met vriendelijke groet,<br/><strong>Henk van der Klaver</strong><br/>Rijinstructeur – Rijschool KlaverDrive</p>
+              <p>Heb je in de tussentijd alvast een vraag? Je kunt altijd bellen of WhatsAppen naar <strong>06 - 24 81 90 32</strong>.</p>
+              <p style="margin-top: 24px;">Met vriendelijke groet,<br/><strong>Rijschool KlaverDrive</strong></p>
             </div>
           </div>
         `,
@@ -112,7 +112,7 @@ serve(async (req: Request) => {
         subject: `Nieuwe Proefles Aanvraag: ${booking.name} (${booking.preferred_datetime})`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; max-width: 580px; margin: 0 auto; line-height: 1.6;">
-            <h2 style="color: #1e3a8a; margin-bottom: 8px;">Nieuwe Proefles Aanvraag</h2>
+            <h2 style="color: #064e3b; margin-bottom: 8px;">Nieuwe Proefles Aanvraag</h2>
             <p style="margin-top: 0; color: #475569;">Er is zojuist een nieuwe proefles aangevraagd via de website.</p>
             <table style="width: 100%; border-collapse: collapse; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
               <tr>

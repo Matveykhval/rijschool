@@ -345,14 +345,14 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-slate-100 text-slate-900">
       {/* Dedicated Utilitarian Admin Top Bar */}
       <header className="bg-slate-900 text-white border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+        <div className="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-6">
             <span className="font-bold text-sm tracking-wide flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               KlaverDrive Admin
             </span>
 
-            <nav className="flex items-center gap-1">
+            <nav className="flex flex-wrap items-center gap-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('bookings')}
@@ -426,7 +426,7 @@ export default function AdminDashboard() {
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-800 hover:bg-red-900/80 text-xs font-semibold text-slate-200 hover:text-white transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              Uitloggen
+              <span className="hidden sm:inline">Uitloggen</span>
             </button>
           </div>
         </div>
@@ -492,6 +492,7 @@ export default function AdminDashboard() {
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase">
+                      <th className="py-2.5 px-3 font-bold">Aangevraagd</th>
                       <th className="py-2.5 px-3 font-bold">Naam</th>
                       <th className="py-2.5 px-3 font-bold">Contact</th>
                       <th className="py-2.5 px-3 font-bold">Voorkeur Moment</th>
@@ -516,8 +517,20 @@ export default function AdminDashboard() {
                           ? 'Afgewezen'
                           : 'Nieuw';
 
+                      const formattedDate = booking.created_at
+                        ? new Date(booking.created_at).toLocaleString('nl-NL', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '—';
+
                       return (
                         <tr key={booking.id} className="hover:bg-slate-50">
+                          <td className="py-3 px-3 text-slate-500 whitespace-nowrap">
+                            {formattedDate}
+                          </td>
                           <td className="py-3 px-3 font-bold text-slate-900 whitespace-nowrap">
                             {booking.name}
                           </td>

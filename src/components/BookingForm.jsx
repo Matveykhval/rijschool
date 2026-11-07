@@ -20,12 +20,24 @@ export default function BookingForm({ selectedPackageName }) {
   // Update message when user clicks a specific package card
   React.useEffect(() => {
     if (selectedPackageName) {
-      setFormData((prev) => ({
-        ...prev,
-        message: prev.message
-          ? prev.message
-          : `Ik heb interesse in het ${selectedPackageName}.`,
-      }));
+      setFormData((prev) => {
+        const packageLine = `Ik heb interesse in het ${selectedPackageName}.`;
+        if (!prev.message) {
+          return { ...prev, message: packageLine };
+        }
+        // Replace previous auto-filled package line if the user clicked a different package
+        const autoFillPattern = /^(Ik heb interesse in het .+\.|Interesse in: .+)$/m;
+        if (autoFillPattern.test(prev.message)) {
+          return {
+            ...prev,
+            message: prev.message.replace(autoFillPattern, packageLine),
+          };
+        }
+        return {
+          ...prev,
+          message: `${packageLine}\n${prev.message}`,
+        };
+      });
     }
   }, [selectedPackageName]);
 
@@ -56,6 +68,13 @@ export default function BookingForm({ selectedPackageName }) {
           .insert([bookingPayload]);
 
         if (insertError) throw insertError;
+
+        // Trigger the confirmation and instructor notification emails via Edge Function
+        supabase.functions
+          .invoke('send-booking-email', { body: bookingPayload })
+          .catch((emailErr) => {
+            console.warn('Could not invoke send-booking-email function:', emailErr);
+          });
       } else {
         const localBookings = JSON.parse(localStorage.getItem('demo_bookings') || '[]');
         localBookings.unshift({

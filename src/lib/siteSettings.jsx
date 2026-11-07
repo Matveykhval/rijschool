@@ -3,11 +3,9 @@ import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 export const SETTINGS_ROW_NAME = '__SITE_SETTINGS__';
 
-export const DEFAULT_SITE_SETTINGS = {
-  // Groene Statistiekenbalk (4 blokken)
-  stat_1_value: '15+ jaar',
+export const SITE_INFO = {
+  // Groene Statistiekenbalk vaste waarden & labels
   stat_1_label: 'Ervaring als rijinstructeur',
-  stat_2_value: '88%',
   stat_2_label: 'Slaagt in één keer bij het CBR',
   stat_3_value: '100 min',
   stat_3_label: 'Blokuren (2 lessen van 50 min)',
@@ -25,6 +23,8 @@ export const DEFAULT_SITE_SETTINGS = {
   // Bedrijfs- & Contactgegevens
   phone_display: '06 - 24 81 90 32',
   phone_raw: '0624819032',
+  whatsapp_url:
+    'https://wa.me/31624819032?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.',
   email: 'info@klaverdrive.nl',
   cbr_number: '1085G9',
   kvk_number: '92860605',
@@ -34,14 +34,21 @@ export const DEFAULT_SITE_SETTINGS = {
     'Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft en Wateringen',
 };
 
+export const DEFAULT_SITE_SETTINGS = {
+  ...SITE_INFO,
+  stat_1_value: '15+ jaar',
+  stat_2_value: '88%',
+};
+
 function getInitialSettings() {
   try {
     const cached = localStorage.getItem('demo_site_settings');
     if (cached) {
+      const parsed = JSON.parse(cached);
       return {
         ...DEFAULT_SITE_SETTINGS,
-        ...JSON.parse(cached),
-        stat_4_value: '5/5',
+        stat_1_value: parsed.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
+        stat_2_value: parsed.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
       };
     }
   } catch {
@@ -80,11 +87,19 @@ export function SiteSettingsProvider({ children }) {
         ) {
           const merged = {
             ...DEFAULT_SITE_SETTINGS,
-            ...data.features,
-            stat_4_value: '5/5',
+            stat_1_value:
+              data.features.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
+            stat_2_value:
+              data.features.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
           };
           setSettings(merged);
-          localStorage.setItem('demo_site_settings', JSON.stringify(merged));
+          localStorage.setItem(
+            'demo_site_settings',
+            JSON.stringify({
+              stat_1_value: merged.stat_1_value,
+              stat_2_value: merged.stat_2_value,
+            })
+          );
         }
       }
     } catch (err) {
@@ -99,12 +114,19 @@ export function SiteSettingsProvider({ children }) {
   }, []);
 
   const saveSettings = async (newSettings) => {
+    const editableStats = {
+      stat_1_value:
+        newSettings.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
+      stat_2_value:
+        newSettings.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
+    };
+
     const merged = {
       ...DEFAULT_SITE_SETTINGS,
-      ...newSettings,
-      stat_4_value: '5/5',
+      ...editableStats,
     };
-    localStorage.setItem('demo_site_settings', JSON.stringify(merged));
+
+    localStorage.setItem('demo_site_settings', JSON.stringify(editableStats));
 
     if (isSupabaseConfigured && supabase) {
       const { data: existing } = await supabase
@@ -115,10 +137,10 @@ export function SiteSettingsProvider({ children }) {
 
       const payload = {
         name: SETTINGS_ROW_NAME,
-        subtitle: 'Systeeminstellingen voor website cijfers en gegevens',
+        subtitle: 'Systeeminstellingen voor website statistieken',
         price: 0,
         lessons_count: 1,
-        features: merged,
+        features: editableStats,
         is_popular: false,
         sort_order: -999,
       };

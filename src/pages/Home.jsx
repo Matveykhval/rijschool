@@ -7,9 +7,11 @@ import {
   Award,
   Car,
   Phone,
+  MessageCircle,
   Clock,
   MapPin,
   CheckCircle,
+  ChevronDown,
 } from 'lucide-react';
 
 export default function Home() {
@@ -248,7 +250,7 @@ export default function Home() {
                           € {Number(pkg.price).toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
                         </span>
                         <span className="text-xs text-slate-500 block mt-1">
-                          Inclusief CBR praktijkexamen &bull; Geen inschrijfkosten
+                          Inclusief btw &amp; CBR praktijkexamen &bull; Geen inschrijfkosten
                         </span>
                       </div>
 
@@ -289,7 +291,7 @@ export default function Home() {
                 1 les duurt <strong>{settings.single_lesson_minutes} minuten</strong>, maar we plannen altijd <strong>2 lessen achter elkaar (1 blokuur = {settings.block_lesson_minutes} minuten)</strong>. Zo leer je sneller en heb je minder ritten nodig om klaar te zijn voor het CBR-examen.
               </p>
               <p className="text-xs text-slate-600 pt-1">
-                Losse rijles ({settings.single_lesson_minutes} min): <strong>€ {settings.single_lesson_price},-</strong> &bull; Los CBR Praktijkexamen: <strong>€ {settings.exam_price},-</strong> &bull; Tussentijdse Toets: <strong>€ {settings.ttt_price},-</strong>
+                Losse rijles ({settings.single_lesson_minutes} min): <strong>€ {settings.single_lesson_price},-</strong> &bull; Los CBR Praktijkexamen: <strong>€ {settings.exam_price},-</strong> &bull; Tussentijdse Toets: <strong>€ {settings.ttt_price},-</strong> <span className="text-slate-500">(alle tarieven zijn incl. btw)</span>
               </p>
             </div>
             <button
@@ -349,8 +351,56 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ SECTION */}
+      <section id="faq" className="py-16 bg-white border-b border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+              Goed om te weten
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+              Veelgestelde vragen
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: 'Wat kost een proefles als ik daarna nog geen pakket kies?',
+                a: `Wanneer je na de proefles kiest voor een van onze lespakketten, is de proefles helemaal gratis. Besluit je om losse lessen te volgen of niet verder te gaan? Dan rekenen we enkel het tarief van een losse les (€ ${settings.single_lesson_price},- incl. btw).`,
+              },
+              {
+                q: 'Kan ik bij jullie al vanaf 16,5 jaar starten met rijles (2toDrive)?',
+                a: 'Ja! Vanaf 16,5 jaar mag je starten met rijlessen en vanaf je 17e verjaardag mag je het CBR praktijkexamen afleggen. Tot je 18e rijd je daarna onder begeleiding van een coach.',
+              },
+              {
+                q: 'Kan ik mijn lespakket in termijnen betalen?',
+                a: 'Ja, betalen in termijnen is mogelijk zonder extra kosten of rente. We spreken samen een duidelijk betaalschema af voordat je start.',
+              },
+              {
+                q: 'Geven jullie rijles in een schakelauto of automaat?',
+                a: `Wij geven les in een moderne ${settings.car_model}. Wanneer je slaagt in een schakelauto, krijg je een volledig rijbewijs B waarmee je zowel in een handgeschakelde auto als in een automaat mag rijden.`,
+              },
+            ].map((item, idx) => (
+              <details
+                key={idx}
+                className="group bg-slate-50 border border-slate-200 rounded-lg p-5 open:bg-white open:shadow-sm transition-all"
+              >
+                <summary className="flex items-center justify-between cursor-pointer list-none font-bold text-slate-900 text-sm sm:text-base">
+                  <span>{item.q}</span>
+                  <ChevronDown className="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180 shrink-0 ml-4" />
+                </summary>
+                <p className="text-sm text-slate-600 mt-3 leading-relaxed">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* PROEFLES BOOKING SECTION */}
-      <section id="proefles" className="py-16 md:py-24 bg-white">
+      <section id="proefles" className="py-16 md:py-24 bg-slate-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Info Column */}
@@ -367,7 +417,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 space-y-4">
+              <div className="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
                 <h4 className="font-bold text-slate-900 text-sm">
                   Waarom leerlingen voor KlaverDrive kiezen:
                 </h4>
@@ -391,18 +441,29 @@ export default function Home() {
 
               <div className="bg-emerald-950 text-white rounded-lg p-5">
                 <p className="text-xs uppercase tracking-wider text-amber-400 font-bold">
-                  Liever direct telefonisch overleggen?
+                  Liever direct via WhatsApp of telefonisch overleggen?
                 </p>
                 <p className="text-sm text-emerald-100 mt-1">
-                  Tijdens rijlessen neem ik de telefoon niet op voor de veiligheid van mijn leerling. Stuur gerust een WhatsAppje of spreek de voicemail in, dan bel ik je tussen de lessen door terug!
+                  Tijdens rijlessen neem ik de telefoon niet op voor de veiligheid van mijn leerling. Stuur gerust een WhatsAppje of spreek de voicemail in, dan reageer ik direct tussen de lessen door!
                 </p>
-                <a
-                  href={`tel:${settings.phone_raw}`}
-                  className="mt-4 inline-flex items-center gap-2 text-base font-extrabold text-white hover:text-amber-400"
-                >
-                  <Phone className="w-4 h-4 text-amber-400" />
-                  {settings.phone_display}
-                </a>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <a
+                    href={settings.whatsapp_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-bold px-4 py-2.5 rounded-md transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 text-amber-400" />
+                    WhatsApp ons
+                  </a>
+                  <a
+                    href={`tel:${settings.phone_raw}`}
+                    className="inline-flex items-center gap-2 text-sm font-extrabold text-white hover:text-amber-400 px-2 py-2"
+                  >
+                    <Phone className="w-4 h-4 text-amber-400" />
+                    {settings.phone_display}
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -413,6 +474,18 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FLOATING WHATSAPP ACTION BUTTON */}
+      <a
+        href={settings.whatsapp_url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Stuur een WhatsApp bericht"
+        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-full shadow-lg border border-emerald-600 transition-transform hover:scale-105"
+      >
+        <MessageCircle className="w-4 h-4 text-amber-400 shrink-0" />
+        <span>WhatsApp</span>
+      </a>
     </div>
   );
 }

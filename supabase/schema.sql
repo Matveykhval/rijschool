@@ -145,7 +145,7 @@ VALUES
     'Voor leerlingen die snel de basis oppakken',
     1395.00,
     20,
-    '["20 rijlessen van 60 minuten", "Vaste gecertificeerde instructeur", "CBR Praktijkexamen inbegrepen", "Gratis toegang tot online theorie-omgeving", "Ophaalservice thuis of op school"]'::jsonb,
+    '["20 rijlessen", "Vaste gecertificeerde instructeur", "CBR Praktijkexamen inbegrepen", "Gratis toegang tot online theorie-omgeving", "Ophaalservice thuis, school of station"]'::jsonb,
     false,
     1
   ),
@@ -154,7 +154,7 @@ VALUES
     'Onze meest gekozen route naar het rijbewijs',
     1995.00,
     30,
-    '["30 rijlessen van 60 minuten", "CBR Tussentijdse Toets (TTT) inbegrepen", "CBR Praktijkexamen inbegrepen", "Volledige online theoriecursus + oefenexamens", "Vaste instructeur & vaste lesauto"]'::jsonb,
+    '["30 rijlessen", "CBR Tussentijdse Toets (TTT) inbegrepen", "CBR Praktijkexamen inbegrepen", "Volledige online theoriecursus + oefenexamens", "Vaste instructeur & vaste Volkswagen Golf 8"]'::jsonb,
     true,
     2
   ),
@@ -162,8 +162,8 @@ VALUES
     'ZekerSlagen Pakket',
     'Extra rust en ruimte om in je eigen tempo te leren',
     2475.00,
-    38,
-    '["38 rijlessen van 60 minuten", "CBR Tussentijdse Toets (TTT) inbegrepen", "CBR Praktijkexamen inbegrepen", "1x CBR Herexamen garantie inbegrepen", "Extra aandacht voor rijangst of faalangst"]'::jsonb,
+    40,
+    '["40 rijlessen", "CBR Tussentijdse Toets (TTT) inbegrepen", "CBR Praktijkexamen inbegrepen", "1x CBR Herexamen garantie inbegrepen", "Extra aandacht voor rijangst of faalangst"]'::jsonb,
     false,
     3
   );

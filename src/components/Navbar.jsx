@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Phone, Menu, X, ShieldCheck, Instagram } from 'lucide-react';
+import { Phone, MessageCircle, Menu, X, ShieldCheck, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Navbar() {
@@ -44,11 +44,21 @@ export default function Navbar() {
             </a>
             <span className="text-emerald-700 hidden sm:inline">|</span>
             <a
+              href={settings.whatsapp_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 text-emerald-100 hover:text-amber-400 transition-colors font-medium"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-amber-400" />
+              <span>WhatsApp</span>
+            </a>
+            <span className="text-emerald-700 hidden sm:inline">|</span>
+            <a
               href={`tel:${settings.phone_raw}`}
               className="flex items-center gap-1.5 text-white hover:text-amber-400 transition-colors font-medium"
             >
               <Phone className="w-3.5 h-3.5 text-amber-400" />
-              <span>Bel of WhatsApp: {settings.phone_display}</span>
+              <span>{settings.phone_display}</span>
             </a>
           </div>
         </div>
@@ -73,7 +83,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-700">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-700">
             {isHome ? (
               <>
                 <button
@@ -87,6 +97,12 @@ export default function Navbar() {
                   className="hover:text-emerald-800 transition-colors"
                 >
                   Werkwijze
+                </button>
+                <button
+                  onClick={() => scrollToSection('faq')}
+                  className="hover:text-emerald-800 transition-colors"
+                >
+                  Veelgestelde Vragen
                 </button>
                 <button
                   onClick={() => scrollToSection('proefles')}
@@ -135,6 +151,12 @@ export default function Navbar() {
                 className="block w-full text-left py-2 text-base font-semibold text-slate-800 border-b border-slate-100"
               >
                 Werkwijze
+              </button>
+              <button
+                onClick={() => scrollToSection('faq')}
+                className="block w-full text-left py-2 text-base font-semibold text-slate-800 border-b border-slate-100"
+              >
+                Veelgestelde Vragen
               </button>
               <button
                 onClick={() => scrollToSection('proefles')}

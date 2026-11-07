@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock, Instagram } from 'lucide-react';
+import { Phone, MessageCircle, Mail, MapPin, Clock, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../lib/siteSettings';
 
 export default function Footer() {
@@ -35,11 +35,32 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>{settings.phone_display} (Bellen of WhatsApp)</span>
+                <a
+                  href={`tel:${settings.phone_raw}`}
+                  className="hover:text-white transition-colors"
+                >
+                  {settings.phone_display}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MessageCircle className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
+                <a
+                  href={settings.whatsapp_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Stuur direct een WhatsApp bericht
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>{settings.email}</span>
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="hover:text-white transition-colors"
+                >
+                  {settings.email}
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Instagram className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
