@@ -215,13 +215,21 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            <div
+              className={`grid grid-cols-1 gap-6 items-stretch ${
+                packages.length === 4
+                  ? 'md:grid-cols-2 lg:grid-cols-4'
+                  : packages.length === 2
+                  ? 'md:grid-cols-2 max-w-4xl mx-auto'
+                  : 'md:grid-cols-3'
+              }`}
+            >
               {packages.map((pkg) => {
                 const featureList = Array.isArray(pkg.features) ? pkg.features : [];
                 return (
                   <div
                     key={pkg.id}
-                    className={`rounded-lg p-6 sm:p-8 flex flex-col justify-between relative ${
+                    className={`rounded-lg p-6 flex flex-col justify-between relative ${
                       pkg.is_popular
                         ? 'border-2 border-emerald-800 bg-white shadow-md'
                         : 'border border-slate-200 bg-slate-50/60 shadow-sm'

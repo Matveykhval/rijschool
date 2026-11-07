@@ -622,7 +622,13 @@ export default function AdminDashboard() {
                 Laden...
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                className={`grid grid-cols-1 gap-4 ${
+                  packages.length >= 4
+                    ? 'md:grid-cols-2 lg:grid-cols-4'
+                    : 'md:grid-cols-3'
+                }`}
+              >
                 {packages.map((pkg) => {
                   const featureList = Array.isArray(pkg.features) ? pkg.features : [];
                   return (
