@@ -67,12 +67,6 @@ export default function Navbar() {
             {isHome ? (
               <>
                 <button
-                  onClick={() => scrollToSection('instructeur')}
-                  className="hover:text-emerald-800 transition-colors"
-                >
-                  Over de Instructeur
-                </button>
-                <button
                   onClick={() => scrollToSection('pakketten')}
                   className="hover:text-emerald-800 transition-colors"
                 >
@@ -120,12 +114,6 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-slate-200 px-4 pt-3 pb-5 space-y-3">
           {isHome ? (
             <>
-              <button
-                onClick={() => scrollToSection('instructeur')}
-                className="block w-full text-left py-2 text-base font-semibold text-slate-800 border-b border-slate-100"
-              >
-                Over de Instructeur
-              </button>
               <button
                 onClick={() => scrollToSection('pakketten')}
                 className="block w-full text-left py-2 text-base font-semibold text-slate-800 border-b border-slate-100"

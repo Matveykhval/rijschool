@@ -5,8 +5,6 @@ import BookingForm from '../components/BookingForm';
 import {
   Check,
   Award,
-  Shield,
-  HeartHandshake,
   Car,
   Phone,
   Clock,
@@ -129,8 +127,8 @@ export default function Home() {
             <div className="lg:col-span-5">
               <div className="relative rounded-lg overflow-hidden border-2 border-slate-200 shadow-md bg-slate-100">
                 <img
-                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1000&q=80"
-                  alt="Leerling achter het stuur tijdens een rijles op een Nederlandse weg"
+                  src="./auto.jpg"
+                  alt="Lesauto Rijschool KlaverDrive"
                   className="w-full h-80 sm:h-96 object-cover"
                 />
                 <div className="bg-white p-4 border-t border-slate-200 flex items-center justify-between">
@@ -184,82 +182,6 @@ export default function Home() {
               </div>
               <div className="text-xs sm:text-sm text-emerald-100 mt-1">
                 Waardering van oud-leerlingen
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT THE INSTRUCTOR SECTION */}
-      <section id="instructeur" className="py-16 md:py-24 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Authentic Portrait Placeholder */}
-            <div className="lg:col-span-5">
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                <img
-                  src="./auto.jpg"
-                  alt="Rijinstructeur bij Rijschool KlaverDrive"
-                  className="w-full h-80 sm:h-96 object-cover rounded"
-                />
-                <div className="pt-3 px-1 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-base">Rijschool KlaverDrive</h3>
-                    <p className="text-xs text-slate-500">
-                      WRM-gecertificeerd Rijinstructeur (CBR {settings.cbr_number})
-                    </p>
-                  </div>
-                  <span className="text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded">
-                    Vaste instructeur
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Story & Pillars */}
-            <div className="lg:col-span-7 space-y-6">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                  Even voorstellen
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-                  Geen grote keten, maar persoonlijke begeleiding van begin tot eind.
-                </h2>
-              </div>
-
-              <p className="text-slate-600 leading-relaxed">
-                “Autorijden leer je het snelst wanneer je je op je gemak voelt in de auto. Wij begeleiden leerlingen in <strong>{settings.service_areas}</strong> stap voor stap naar hun rijbewijs — van zenuwachtige beginners tot leerlingen die willen overstappen.”
-              </p>
-
-              <p className="text-slate-600 leading-relaxed">
-                Wij werken bewust met <strong>blokuren van {settings.block_lesson_minutes} minuten (2 aaneengesloten lessen van {settings.single_lesson_minutes} minuten)</strong>. Zo gaat er geen kostbare tijd verloren aan heen- en terugrijden en heb je elke rit volop de tijd om verkeerssituaties en examenroutes rondom het CBR echt goed onder de knie te krijgen.
-              </p>
-
-              {/* Three Core Pillars: Patience, Safety, High Pass Rate */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <HeartHandshake className="w-6 h-6 text-emerald-800 mb-2" />
-                  <h4 className="font-bold text-slate-900 text-sm">Alle rust &amp; geduld</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Fouten maken mag; daar zit dubbele bediening voor in de auto. We oefenen net zo lang tot het vertrouwd voelt.
-                  </p>
-                </div>
-
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <Shield className="w-6 h-6 text-emerald-800 mb-2" />
-                  <h4 className="font-bold text-slate-900 text-sm">Veiligheid voorop</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Je leert niet alleen een kunstje voor het examen, maar echt zelfstandig en veilig anticiperen in het verkeer.
-                  </p>
-                </div>
-
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <Award className="w-6 h-6 text-emerald-800 mb-2" />
-                  <h4 className="font-bold text-slate-900 text-sm">Hoog slagingspercentage</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Ruim boven het landelijk CBR-gemiddelde doordat we pas examen aanvragen als je er echt klaar voor bent.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
