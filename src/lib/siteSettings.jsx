@@ -25,7 +25,7 @@ export const SITE_INFO = {
   phone_raw: '0624819032',
   whatsapp_url:
     'https://wa.me/31624819032?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.',
-  email: 'info@klaverdrive.nl',
+  email: 'karahan_kizil@hotmail.com',
   cbr_number: '1085G9',
   kvk_number: '92860605',
   opening_hours: 'Ma t/m Za: 08:00 – 21:00 uur',
