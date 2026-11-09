@@ -54,13 +54,13 @@ export default function BookingForm({ selectedPackageName }) {
     const lines = [
       'Hoi KlaverDrive! Ik wil graag een proefles aanvragen:',
       '',
-      `• *Naam:* ${formData.name.trim()}`,
-      `• *Telefoonnummer:* ${formData.phone.trim()}`,
-      `• *Gewenste datum/dagdeel:* ${formData.preferred_datetime.trim()}`,
+      `• Naam: ${formData.name.trim()}`,
+      `• Telefoonnummer: ${formData.phone.trim()}`,
+      `• Gewenste datum/dagdeel: ${formData.preferred_datetime.trim()}`,
     ];
 
     if (formData.message.trim()) {
-      lines.push(`• *Toelichting / Ophaaladres:* ${formData.message.trim()}`);
+      lines.push(`• Toelichting / Ophaaladres: ${formData.message.trim()}`);
     }
 
     const whatsappUrl = `https://wa.me/${intlPhone}?text=${encodeURIComponent(

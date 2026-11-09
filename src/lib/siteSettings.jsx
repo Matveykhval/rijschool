@@ -25,7 +25,7 @@ export const SITE_INFO = {
   phone_raw: '0684276649',
   whatsapp_url:
     'https://wa.me/31684276649?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.',
-  email: 'info@klaverdrive.nl',
+  email: 'karahan_kizil@hotmail.com',
   cbr_number: '1085G9',
   kvk_number: '92860605',
   opening_hours: 'Ma t/m Za: 08:00 – 21:00 uur',
@@ -60,6 +60,10 @@ function sanitizeSettings(raw) {
       ? `31${cleanDigits.slice(1)}`
       : cleanDigits;
     merged.whatsapp_url = `https://wa.me/${intlPhone}?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.`;
+  }
+
+  if (merged.email === 'info@klaverdrive.nl') {
+    merged.email = DEFAULT_SITE_SETTINGS.email;
   }
 
   return merged;

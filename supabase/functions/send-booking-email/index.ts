@@ -10,7 +10,7 @@
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const INSTRUCTOR_EMAIL = Deno.env.get("INSTRUCTOR_EMAIL") || "info@klaverdrive.nl";
+const INSTRUCTOR_EMAIL = Deno.env.get("INSTRUCTOR_EMAIL") || "karahan_kizil@hotmail.com";
 const FROM_EMAIL = Deno.env.get("FROM_EMAIL") || "Rijschool KlaverDrive <onboarding@resend.dev>";
 
 const corsHeaders = {
