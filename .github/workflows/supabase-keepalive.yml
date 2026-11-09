@@ -1,0 +1,27 @@
+name: Supabase Keep-Alive (Prevent Free Tier Pause)
+
+on:
+  schedule:
+    # Runs every Monday and Thursday at 08:00 UTC to prevent 7-day inactivity pause
+    - cron: '0 8 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Supabase packages table
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://hpkrcviezcinqzhjzjzb.supabase.co' }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'sb_publishable_cqZE8Ofq154Ag2ABUuY4TQ_6X9YqViZ' }}
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/packages?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}")
+          echo "Supabase keep-alive response status: ${HTTP_STATUS}"
+          if [ "$HTTP_STATUS" -ge 400 ]; then
+            echo "Supabase ping failed with status ${HTTP_STATUS}"
+            exit 1
+          fi
+

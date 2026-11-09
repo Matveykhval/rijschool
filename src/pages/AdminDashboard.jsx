@@ -419,7 +419,7 @@ export default function AdminDashboard() {
               <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
                 2. Statistieken (Groene Balk)
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Ervaring (bijv. 15+ jaar)
@@ -441,6 +441,32 @@ export default function AdminDashboard() {
                     type="text"
                     name="stat_2_value"
                     value={settingsForm.stat_2_value || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Blokuren (bijv. 100 min)
+                  </label>
+                  <input
+                    type="text"
+                    name="stat_3_value"
+                    value={settingsForm.stat_3_value || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Waardering (bijv. 5/5)
+                  </label>
+                  <input
+                    type="text"
+                    name="stat_4_value"
+                    value={settingsForm.stat_4_value || ''}
                     onChange={handleSettingsChange}
                     className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
                   />
@@ -600,6 +626,32 @@ export default function AdminDashboard() {
                     type="text"
                     name="service_areas"
                     value={settingsForm.service_areas || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    CBR Rijschoolnummer
+                  </label>
+                  <input
+                    type="text"
+                    name="cbr_number"
+                    value={settingsForm.cbr_number || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    KvK-nummer
+                  </label>
+                  <input
+                    type="text"
+                    name="kvk_number"
+                    value={settingsForm.kvk_number || ''}
                     onChange={handleSettingsChange}
                     className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
                   />

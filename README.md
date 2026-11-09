@@ -1,34 +1,58 @@
-# Rijschool KlaverDrive – E-mail Setup (Vimexx Zonder Hostingpakket)
+# Rijschool KlaverDrive – Beheer & Deployment Overzicht
 
-Omdat je bij **Vimexx** alleen de domeinnaam (`klaverdrive.nl`) hebt zonder hostingpakket, kun je **ImprovMX** (100% gratis voor 1 domein) gebruiken om alle e-mails die naar `info@klaverdrive.nl` worden gestuurd automatisch door te sturen naar `karahan_kizil@hotmail.com`.
-
----
-
-## Deel 1: Inkomende e-mail doorsturen (`info@klaverdrive.nl` → `karahan_kizil@hotmail.com`)
-
-### Stap 1: Maak een gratis ImprovMX account aan
-1. Ga naar [https://improvmx.com](https://improvmx.com).
-2. Vul bij **Domain name** in: `klaverdrive.nl`
-3. Vul bij **Your email address** in: `karahan_kizil@hotmail.com`
-4. Klik op **Create a free alias** en bevestig je account via de link in je Hotmail-inbox.
-
-### Stap 2: Voeg de DNS-records toe in Vimexx
-1. Log in op [https://www.vimexx.nl](https://www.vimexx.nl) → ga naar **Mijn Domeinen** → klik op **Beheren** naast `klaverdrive.nl`.
-2. Scroll naar beneden naar **DNS beheer / DNS wijzigen**.
-3. Voeg de volgende **2 MX-records** en **1 TXT-record** toe op het hoofddomein (laat het linker `Naam`-veld leeg of zet er `@` in, afhankelijk van wat Vimexx toont voor het hoofddomein):
-
-| Type | Naam (Subdomein) | Prioriteit | Waarde / Inhoud |
-| :--- | :--- | :--- | :--- |
-| **MX** | *(leeg laten of `@`)* | `10` | `mx1.improvmx.com.` *(let op: als Vimexx vraagt om geen punt aan het eind, laat de laatste punt weg)* |
-| **MX** | *(leeg laten of `@`)* | `20` | `mx2.improvmx.com.` |
-| **TXT** | *(leeg laten of `@`)* | — | `v=spf1 include:spf.improvmx.com ~all` |
-
-> **Let op bij bestaande MX-records op het hoofddomein:**
-> Als er in Vimexx al oude standaard MX-records staan op het hoofddomein (waar het linker `Naam`-veld leeg is), verwijder die dan. **Laat het MX-record van Resend (`send`) wél gewoon staan!** Die heeft als naam `send` en stoort ImprovMX dus niet.
-
-4. Klik onderaan in Vimexx op **Opslaan**.
-5. Wacht 2 tot 5 minuten en klik in je ImprovMX-dashboard op **Check Again**. Zodra alles groen is (**Email forwarding active**), komt elke mail naar `info@klaverdrive.nl` (en elk ander adres `@klaverdrive.nl`) direct binnen op `karahan_kizil@hotmail.com`!
+Dit project bevat de website en beheeromgeving voor **Rijschool KlaverDrive** (`https://klaverdrive.nl`).
 
 ---
 
+## 1. Belangrijke Links
 
+- **Publieke website:** [https://klaverdrive.nl](https://klaverdrive.nl)
+- **Beheeromgeving (alleen voor beheerder):** [https://klaverdrive.nl/admin](https://klaverdrive.nl/admin) *(of `https://klaverdrive.nl/#/admin`)*
+- **Supabase Project Dashboard:** `https://supabase.com/dashboard/project/hpkrcviezcinqzhjzjzb`
+
+---
+
+## 2. Wat kun je direct in `/admin` aanpassen?
+
+Via `/admin` kun je zonder code-aanpassingen direct wijzigen:
+1. **Tijdelijke Actie / Korting** (bijv. *Herfstactie* aan/uit, actietitel en actietekst boven de pakketten).
+2. **Lespakketten & Prijzen** (pakketten toevoegen, bewerken, verwijderen, "Meest Gekozen"-badge en optionele doorgestreepte *Oude prijs* voor kortingsacties).
+3. **Statistieken** (ervaring, slagingspercentage, blokuren, waardering).
+4. **Losse Tarieven & Lesduur** (losse rijles, praktijkexamen, tussentijdse toets, lesduur).
+5. **Contact- & Bedrijfsgegevens** (telefoonnummer, WhatsApp-nummer, e-mailadres, openingstijden, lesauto, lesgebied, CBR-nummer en KvK-nummer).
+
+---
+
+## 3. Beveiliging & Onderhoud (Checklist)
+
+- **Supabase Signups uitschakelen:** Zorg dat in het Supabase Dashboard onder **Authentication → User Signups** de optie *"Allow new users to sign up"* **UIT** staat. Zo kan alleen jouw eigen beheerdersaccount inloggen op `/admin`.
+- **Automatische Supabase Keep-Alive:** De GitHub Action `.github/workflows/supabase-keepalive.yml` pingt de database elke maandag en donderdag automatisch zodat het gratis Supabase-project nooit op pauze springt.
+
+---
+
+## 4. Domein & DNS (Vimexx → GitHub Pages)
+
+In Vimexx DNS voor `klaverdrive.nl`:
+
+| Type | Naam | Waarde / Inhoud |
+| :--- | :--- | :--- |
+| **A** | `@` *(of leeg)* | `185.199.108.153` |
+| **A** | `@` *(of leeg)* | `185.199.109.153` |
+| **A** | `@` *(of leeg)* | `185.199.110.153` |
+| **A** | `@` *(of leeg)* | `185.199.111.153` |
+| **CNAME** | `www` | `<jouw-github-username>.github.io` |
+
+---
+
+## 5. Lokaal Ontwikkelen
+
+```bash
+npm install
+npm run dev
+```
+
+Productie-build testen:
+```bash
+npm run build
+npm run preview
+```

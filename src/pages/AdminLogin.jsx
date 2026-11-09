@@ -80,7 +80,7 @@ export default function AdminLogin() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="karahan_kizil@hotmail.com"
+              placeholder="beheer@domein.nl"
               className="w-full rounded border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none"
             />
           </div>

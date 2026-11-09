@@ -185,10 +185,10 @@ export default function Home() {
             </div>
             <div className="px-2">
               <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
-                5/5
+                {settings.stat_4_value}
               </div>
               <div className="text-xs sm:text-sm text-emerald-100 mt-1">
-                Waardering van oud-leerlingen
+                {settings.stat_4_label}
               </div>
             </div>
           </div>
