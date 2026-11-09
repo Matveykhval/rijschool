@@ -32,6 +32,12 @@ export const SITE_INFO = {
   car_model: 'Volkswagen Golf 8 (Handgeschakeld)',
   service_areas:
     'Den Hoorn, Den Haag, Rijswijk, Nootdorp, Ypenburg, Delft en Wateringen',
+
+  // Tijdelijke Actie / Korting (bijv. Herfstactie)
+  promo_active: true,
+  promo_title: 'Herfstactie',
+  promo_text:
+    'Tijdelijk extra voordeel op onze lespakketten + gratis proefles bij afname van een pakket!',
 };
 
 export const DEFAULT_SITE_SETTINGS = {
@@ -179,4 +185,33 @@ export function SiteSettingsProvider({ children }) {
 
 export function useSiteSettings() {
   return useContext(SiteSettingsContext);
+}
+
+const OLD_PRICE_PREFIX = '__OLD_PRICE__:';
+
+export function extractPackageMeta(pkg) {
+  const rawFeatures = Array.isArray(pkg?.features) ? pkg.features : [];
+  let oldPrice = pkg?.old_price ? Number(pkg.old_price) : null;
+  const cleanFeatures = [];
+
+  for (const item of rawFeatures) {
+    if (typeof item === 'string' && item.startsWith(OLD_PRICE_PREFIX)) {
+      const parsed = Number(item.slice(OLD_PRICE_PREFIX.length));
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        oldPrice = parsed;
+      }
+    } else {
+      cleanFeatures.push(item);
+    }
+  }
+
+  return { cleanFeatures, oldPrice };
+}
+
+export function buildPackageFeatures(cleanFeatures, oldPrice) {
+  const numOld = Number(oldPrice);
+  if (!Number.isNaN(numOld) && numOld > 0) {
+    return [`${OLD_PRICE_PREFIX}${numOld}`, ...cleanFeatures];
+  }
+  return cleanFeatures;
 }

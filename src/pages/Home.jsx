@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured, DEFAULT_PACKAGES } from '../lib/supabaseClient';
-import { useSiteSettings, SETTINGS_ROW_NAME } from '../lib/siteSettings';
+import {
+  useSiteSettings,
+  SETTINGS_ROW_NAME,
+  extractPackageMeta,
+} from '../lib/siteSettings';
 import BookingForm from '../components/BookingForm';
 import {
   Check,
@@ -198,7 +202,7 @@ export default function Home() {
             packages.length >= 4 ? 'max-w-[1400px]' : 'max-w-6xl'
           }`}
         >
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-10">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
               Heldere Tarieven
             </span>
@@ -208,6 +212,22 @@ export default function Home() {
             <p className="text-slate-600 mt-3 text-base">
               Twijfel je welk pakket bij je past? Na de proefles geef ik je een eerlijk advies. Betalen in termijnen is zonder extra kosten mogelijk.
             </p>
+
+            {/* Optional Seasonal Promo / Discount Banner (e.g. Herfstactie) */}
+            {settings.promo_active && (settings.promo_title || settings.promo_text) && (
+              <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2.5 bg-amber-50 border border-amber-300 text-amber-950 px-5 py-2.5 rounded-full shadow-sm text-sm">
+                {settings.promo_title && (
+                  <span className="bg-amber-600 text-white text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                    {settings.promo_title}
+                  </span>
+                )}
+                {settings.promo_text && (
+                  <span className="font-semibold text-amber-950">
+                    {settings.promo_text}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {loadingPackages ? (
@@ -230,7 +250,11 @@ export default function Home() {
               }`}
             >
               {packages.map((pkg) => {
-                const featureList = Array.isArray(pkg.features) ? pkg.features : [];
+                const { cleanFeatures: featureList, oldPrice } = extractPackageMeta(pkg);
+                const currentPrice = Number(pkg.price);
+                const hasDiscount = oldPrice && oldPrice > currentPrice;
+                const savings = hasDiscount ? Math.round(oldPrice - currentPrice) : 0;
+
                 return (
                   <div
                     key={pkg.id}
@@ -266,9 +290,23 @@ export default function Home() {
                       </div>
 
                       <div className="my-5 pb-5 border-b border-slate-200">
-                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                          € {Number(pkg.price).toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
-                        </span>
+                        <div className="flex items-baseline flex-wrap gap-2.5">
+                          <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                            € {currentPrice.toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
+                          </span>
+                          {hasDiscount && (
+                            <span className="text-base font-bold text-slate-400 line-through">
+                              € {oldPrice.toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
+                            </span>
+                          )}
+                          {hasDiscount && (
+                            <span className="whitespace-nowrap text-[11px] font-extrabold uppercase tracking-wide bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded">
+                              {settings.promo_active && settings.promo_title
+                                ? `${settings.promo_title}: -€ ${savings}`
+                                : `Bespaar € ${savings}`}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-xs text-slate-500 block mt-1.5 leading-relaxed">
                           Inclusief btw &amp; CBR praktijkexamen &bull; Geen inschrijfkosten
                         </span>

@@ -5,6 +5,8 @@ import {
   useSiteSettings,
   SETTINGS_ROW_NAME,
   DEFAULT_SITE_SETTINGS,
+  extractPackageMeta,
+  buildPackageFeatures,
 } from '../lib/siteSettings';
 import {
   Package,
@@ -24,6 +26,7 @@ const EMPTY_PACKAGE_FORM = {
   name: '',
   subtitle: '',
   price: '',
+  old_price: '',
   lessons_count: '',
   featuresText: '',
   is_popular: false,
@@ -135,14 +138,15 @@ export default function AdminDashboard() {
   }
 
   function openEditPackageForm(pkg) {
-    const featuresArray = Array.isArray(pkg.features) ? pkg.features : [];
+    const { cleanFeatures, oldPrice } = extractPackageMeta(pkg);
     setPkgForm({
       id: pkg.id,
       name: pkg.name,
       subtitle: pkg.subtitle || '',
       price: pkg.price,
+      old_price: oldPrice || '',
       lessons_count: pkg.lessons_count,
-      featuresText: featuresArray.join('\n'),
+      featuresText: cleanFeatures.join('\n'),
       is_popular: Boolean(pkg.is_popular),
       sort_order: pkg.sort_order || 1,
     });
@@ -159,12 +163,17 @@ export default function AdminDashboard() {
       .map((line) => line.trim())
       .filter(Boolean);
 
+    const serializedFeatures = buildPackageFeatures(
+      parsedFeatures,
+      pkgForm.old_price
+    );
+
     const payload = {
       name: pkgForm.name.trim(),
       subtitle: pkgForm.subtitle.trim() || null,
       price: Number(pkgForm.price),
       lessons_count: Number(pkgForm.lessons_count),
-      features: parsedFeatures,
+      features: serializedFeatures,
       is_popular: Boolean(pkgForm.is_popular),
       sort_order: Number(pkgForm.sort_order) || 1,
     };
@@ -230,8 +239,11 @@ export default function AdminDashboard() {
   // SITE SETTINGS SAVE
   // ---------------------------------------------------------------------------
   function handleSettingsChange(e) {
-    const { name, value } = e.target;
-    setSettingsForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setSettingsForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   }
 
   async function handleSaveSiteSettings(e) {
@@ -347,14 +359,65 @@ export default function AdminDashboard() {
                 Website Instellingen
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Pas hier snel statistieken, losse tarieven en contactgegevens aan.
+                Pas hier snel tijdelijke acties (zoals Herfstactie), statistieken, losse tarieven en contactgegevens aan.
               </p>
             </div>
 
-            {/* Section 1: Statistieken */}
+            {/* Section 1: Tijdelijke Actie / Korting */}
+            <div className="bg-white border border-amber-300 rounded p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h2 className="text-sm font-bold text-slate-900">
+                  1. Tijdelijke Actie / Korting (bijv. Herfstactie)
+                </h2>
+                <label className="inline-flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="promo_active"
+                    checked={Boolean(settingsForm.promo_active)}
+                    onChange={handleSettingsChange}
+                  />
+                  Actie tonen op website
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Actie naam / badge
+                  </label>
+                  <input
+                    type="text"
+                    name="promo_title"
+                    placeholder="Bijv. Herfstactie"
+                    value={settingsForm.promo_title || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Actie tekst boven de lespakketten
+                  </label>
+                  <input
+                    type="text"
+                    name="promo_text"
+                    placeholder="Bijv. Tijdelijk extra korting op al onze lespakketten!"
+                    value={settingsForm.promo_text || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Tip: Wil je bij een specifiek pakket een doorgestreepte &ldquo;van&rdquo;-prijs tonen (bijv. van € 1.050 voor € 925)? Vul dan bij het tabblad <strong>Pakketten</strong> &rarr; <strong>Bewerken</strong> het veld <em>Oude prijs (€)</em> in.
+              </p>
+            </div>
+
+            {/* Section 2: Statistieken */}
             <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
-                1. Statistieken (Groene Balk)
+                2. Statistieken (Groene Balk)
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -385,10 +448,10 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Section 2: Losse Tarieven & Lesduur */}
+            {/* Section 3: Losse Tarieven & Lesduur */}
             <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
-                2. Losse Tarieven &amp; Lesduur
+                3. Losse Tarieven &amp; Lesduur
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
@@ -458,10 +521,10 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Section 3: Contact & Bedrijfsgegevens */}
+            {/* Section 4: Contact & Bedrijfsgegevens */}
             <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
-                3. Contact- &amp; Bedrijfsgegevens
+                4. Contact- &amp; Bedrijfsgegevens
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -587,7 +650,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 {packages.map((pkg) => {
-                  const featureList = Array.isArray(pkg.features) ? pkg.features : [];
+                  const { cleanFeatures: featureList, oldPrice } = extractPackageMeta(pkg);
                   return (
                     <div
                       key={pkg.id}
@@ -605,9 +668,16 @@ export default function AdminDashboard() {
                         <p className="text-xs text-slate-500 mb-3">{pkg.subtitle}</p>
 
                         <div className="py-2 mb-3 border-y border-slate-100 flex items-baseline justify-between">
-                          <span className="text-lg font-extrabold text-slate-900">
-                            € {Number(pkg.price).toLocaleString('nl-NL')}
-                          </span>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-lg font-extrabold text-slate-900">
+                              € {Number(pkg.price).toLocaleString('nl-NL')}
+                            </span>
+                            {oldPrice && oldPrice > Number(pkg.price) && (
+                              <span className="text-xs font-semibold text-slate-400 line-through">
+                                € {Number(oldPrice).toLocaleString('nl-NL')}
+                              </span>
+                            )}
+                          </div>
                           <span className="text-xs font-semibold text-slate-600">
                             {pkg.lessons_count} lessen
                           </span>
@@ -693,10 +763,10 @@ export default function AdminDashboard() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block font-bold text-slate-700 mb-1">
-                          Prijs (€) *
+                          Actieprijs / Prijs (€) *
                         </label>
                         <input
                           type="number"
@@ -713,7 +783,26 @@ export default function AdminDashboard() {
 
                       <div>
                         <label className="block font-bold text-slate-700 mb-1">
-                          Lessen *
+                          Oude prijs (€) <span className="font-normal text-slate-400">(optioneel)</span>
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="Bijv. 1050"
+                          value={pkgForm.old_price}
+                          onChange={(e) =>
+                            setPkgForm({ ...pkgForm, old_price: e.target.value })
+                          }
+                          className="w-full rounded border border-slate-300 px-2.5 py-1.5 text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block font-bold text-slate-700 mb-1">
+                          Aantal Lessen *
                         </label>
                         <input
                           type="number"
