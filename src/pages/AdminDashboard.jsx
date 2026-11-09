@@ -7,11 +7,9 @@ import {
   DEFAULT_SITE_SETTINGS,
 } from '../lib/siteSettings';
 import {
-  Calendar,
   Package,
   Sliders,
   LogOut,
-  Check,
   X,
   Plus,
   Pencil,
@@ -34,17 +32,12 @@ const EMPTY_PACKAGE_FORM = {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('bookings');
+  const [activeTab, setActiveTab] = useState('settings');
 
   // Global Site Settings
   const { settings, saveSettings, refreshSettings } = useSiteSettings();
   const [settingsForm, setSettingsForm] = useState(DEFAULT_SITE_SETTINGS);
   const [savingSettings, setSavingSettings] = useState(false);
-
-  // Bookings State
-  const [bookings, setBookings] = useState([]);
-  const [loadingBookings, setLoadingBookings] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('all');
 
   // Packages State
   const [packages, setPackages] = useState([]);
@@ -56,7 +49,6 @@ export default function AdminDashboard() {
   const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
-    fetchBookings();
     fetchPackages();
   }, []);
 
@@ -70,76 +62,6 @@ export default function AdminDashboard() {
     setFeedback(msg);
     setTimeout(() => setFeedback(''), 3000);
   };
-
-  // ---------------------------------------------------------------------------
-  // BOOKINGS CRUD
-  // ---------------------------------------------------------------------------
-  async function fetchBookings() {
-    setLoadingBookings(true);
-    try {
-      if (isSupabaseConfigured && supabase) {
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        setBookings(data || []);
-      } else {
-        const local = JSON.parse(localStorage.getItem('demo_bookings') || '[]');
-        setBookings(local);
-      }
-    } catch (err) {
-      console.error('Error fetching bookings:', err);
-    } finally {
-      setLoadingBookings(false);
-    }
-  }
-
-  async function handleUpdateBookingStatus(id, newStatus) {
-    try {
-      if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase
-          .from('bookings')
-          .update({ status: newStatus })
-          .eq('id', id);
-
-        if (error) throw error;
-      } else {
-        const updated = bookings.map((b) =>
-          b.id === id ? { ...b, status: newStatus } : b
-        );
-        localStorage.setItem('demo_bookings', JSON.stringify(updated));
-      }
-
-      setBookings((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-      );
-      showNotice(
-        newStatus === 'approved' ? 'Aanvraag goedgekeurd.' : 'Aanvraag afgewezen.'
-      );
-    } catch (err) {
-      console.error('Failed to update booking status:', err);
-      alert('Kon status niet bijwerken.');
-    }
-  }
-
-  async function handleDeleteBooking(id) {
-    if (!window.confirm('Aanvraag definitief verwijderen?')) return;
-    try {
-      if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('bookings').delete().eq('id', id);
-        if (error) throw error;
-      } else {
-        const updated = bookings.filter((b) => b.id !== id);
-        localStorage.setItem('demo_bookings', JSON.stringify(updated));
-      }
-      setBookings((prev) => prev.filter((b) => b.id !== id));
-      showNotice('Aanvraag verwijderd.');
-    } catch (err) {
-      console.error('Failed to delete booking:', err);
-    }
-  }
 
   // ---------------------------------------------------------------------------
   // PACKAGES CRUD
@@ -335,12 +257,6 @@ export default function AdminDashboard() {
     navigate('/admin/login', { replace: true });
   }
 
-  const filteredBookings = bookings.filter((b) =>
-    statusFilter === 'all' ? true : b.status === statusFilter
-  );
-
-  const pendingCount = bookings.filter((b) => b.status === 'pending').length;
-
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
       {/* Dedicated Utilitarian Admin Top Bar */}
@@ -349,32 +265,27 @@ export default function AdminDashboard() {
           <div className="flex flex-wrap items-center gap-3 sm:gap-6">
             <span className="font-bold text-sm tracking-wide flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              KlaverDrive Admin
+              KlaverDrive Beheer
             </span>
 
             <nav className="flex flex-wrap items-center gap-1">
               <button
                 type="button"
-                onClick={() => setActiveTab('bookings')}
-                className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                  activeTab === 'bookings'
+                onClick={() => setActiveTab('settings')}
+                className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                  activeTab === 'settings'
                     ? 'bg-slate-800 text-white'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Calendar className="w-3.5 h-3.5" />
-                Aanvragen
-                {pendingCount > 0 && (
-                  <span className="bg-amber-500 text-slate-950 text-[11px] px-1.5 py-0.2 rounded font-bold">
-                    {pendingCount}
-                  </span>
-                )}
+                <Sliders className="w-3.5 h-3.5" />
+                Site Instellingen
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('pricing')}
-                className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                   activeTab === 'pricing'
                     ? 'bg-slate-800 text-white'
                     : 'text-slate-400 hover:text-white'
@@ -382,19 +293,6 @@ export default function AdminDashboard() {
               >
                 <Package className="w-3.5 h-3.5" />
                 Pakketten ({packages.length})
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('settings')}
-                className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                  activeTab === 'settings'
-                    ? 'bg-slate-800 text-white'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Sliders className="w-3.5 h-3.5" />
-                Statistieken
               </button>
             </nav>
           </div>
@@ -410,12 +308,11 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={() => {
-                fetchBookings();
                 fetchPackages();
                 refreshSettings();
                 showNotice('Ververst.');
               }}
-              className="p-1.5 rounded text-slate-300 hover:text-white hover:bg-slate-800"
+              className="p-1.5 rounded text-slate-300 hover:text-white hover:bg-slate-800 cursor-pointer"
               title="Gegevens verversen"
             >
               <RefreshCw className="w-4 h-4" />
@@ -423,7 +320,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-800 hover:bg-red-900/80 text-xs font-semibold text-slate-200 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-800 hover:bg-red-900/80 text-xs font-semibold text-slate-200 hover:text-white transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Uitloggen</span>
@@ -441,163 +338,223 @@ export default function AdminDashboard() {
         )}
 
         {/* ================================================================= */}
-        {/* TAB 1: BOOKINGS TABLE                                             */}
+        {/* TAB 1: SITE SETTINGS                                              */}
         {/* ================================================================= */}
-        {activeTab === 'bookings' && (
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h1 className="text-lg font-bold text-slate-900">Proefles Aanvragen</h1>
-              <div className="flex items-center gap-1.5">
-                {[
-                  { key: 'all', label: `Alle (${bookings.length})` },
-                  {
-                    key: 'pending',
-                    label: `Openstaand (${bookings.filter((b) => b.status === 'pending').length})`,
-                  },
-                  {
-                    key: 'approved',
-                    label: `Goedgekeurd (${bookings.filter((b) => b.status === 'approved').length})`,
-                  },
-                  {
-                    key: 'rejected',
-                    label: `Afgewezen (${bookings.filter((b) => b.status === 'rejected').length})`,
-                  },
-                ].map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => setStatusFilter(tab.key)}
-                    className={`px-2.5 py-1 rounded text-xs font-semibold border ${
-                      statusFilter === tab.key
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+        {activeTab === 'settings' && (
+          <form onSubmit={handleSaveSiteSettings} className="max-w-3xl space-y-6">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">
+                Website Instellingen
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Pas hier snel statistieken, losse tarieven en contactgegevens aan.
+              </p>
+            </div>
+
+            {/* Section 1: Statistieken */}
+            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+              <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                1. Statistieken (Groene Balk)
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Ervaring (bijv. 15+ jaar)
+                  </label>
+                  <input
+                    type="text"
+                    name="stat_1_value"
+                    value={settingsForm.stat_1_value || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Slagingspercentage (bijv. 88%)
+                  </label>
+                  <input
+                    type="text"
+                    name="stat_2_value"
+                    value={settingsForm.stat_2_value || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
               </div>
             </div>
 
-            {loadingBookings ? (
-              <div className="bg-white border border-slate-200 rounded p-6 text-center text-xs text-slate-500">
-                Laden...
-              </div>
-            ) : filteredBookings.length === 0 ? (
-              <div className="bg-white border border-slate-200 rounded p-8 text-center text-sm text-slate-500">
-                Geen aanvragen gevonden.
-              </div>
-            ) : (
-              <div className="bg-white border border-slate-200 rounded overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase">
-                      <th className="py-2.5 px-3 font-bold">Aangevraagd</th>
-                      <th className="py-2.5 px-3 font-bold">Naam</th>
-                      <th className="py-2.5 px-3 font-bold">Contact</th>
-                      <th className="py-2.5 px-3 font-bold">Voorkeur Moment</th>
-                      <th className="py-2.5 px-3 font-bold">Opmerking</th>
-                      <th className="py-2.5 px-3 font-bold">Status</th>
-                      <th className="py-2.5 px-3 font-bold text-right">Actie</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    {filteredBookings.map((booking) => {
-                      const statusBadge =
-                        booking.status === 'approved'
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : booking.status === 'rejected'
-                          ? 'bg-red-100 text-red-900'
-                          : 'bg-amber-100 text-amber-900';
+            {/* Section 2: Losse Tarieven & Lesduur */}
+            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+              <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                2. Losse Tarieven &amp; Lesduur
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Losse rijles prijs (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="single_lesson_price"
+                    value={settingsForm.single_lesson_price || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
 
-                      const statusLabel =
-                        booking.status === 'approved'
-                          ? 'Goedgekeurd'
-                          : booking.status === 'rejected'
-                          ? 'Afgewezen'
-                          : 'Nieuw';
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Los praktijkexamen (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="exam_price"
+                    value={settingsForm.exam_price || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
 
-                      const formattedDate = booking.created_at
-                        ? new Date(booking.created_at).toLocaleString('nl-NL', {
-                            day: '2-digit',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })
-                        : '—';
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Tussentijdse Toets (€)
+                  </label>
+                  <input
+                    type="text"
+                    name="ttt_price"
+                    value={settingsForm.ttt_price || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
 
-                      return (
-                        <tr key={booking.id} className="hover:bg-slate-50">
-                          <td className="py-3 px-3 text-slate-500 whitespace-nowrap">
-                            {formattedDate}
-                          </td>
-                          <td className="py-3 px-3 font-bold text-slate-900 whitespace-nowrap">
-                            {booking.name}
-                          </td>
-                          <td className="py-3 px-3 whitespace-nowrap">
-                            <a
-                              href={`tel:${booking.phone}`}
-                              className="font-semibold text-blue-700 hover:underline block"
-                            >
-                              {booking.phone}
-                            </a>
-                            <span className="text-slate-500">{booking.email}</span>
-                          </td>
-                          <td className="py-3 px-3 text-slate-800">
-                            {booking.preferred_datetime}
-                          </td>
-                          <td className="py-3 px-3 text-slate-600 max-w-xs">
-                            {booking.message || '—'}
-                          </td>
-                          <td className="py-3 px-3 whitespace-nowrap">
-                            <span
-                              className={`px-2 py-0.5 rounded font-bold text-[11px] ${statusBadge}`}
-                            >
-                              {statusLabel}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 text-right whitespace-nowrap space-x-1">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleUpdateBookingStatus(booking.id, 'approved')
-                              }
-                              disabled={booking.status === 'approved'}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 text-white font-semibold"
-                              title="Goedkeuren"
-                            >
-                              <Check className="w-3 h-3" />
-                              OK
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleUpdateBookingStatus(booking.id, 'rejected')
-                              }
-                              disabled={booking.status === 'rejected'}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 disabled:opacity-30 text-white font-semibold"
-                              title="Afwijzen"
-                            >
-                              <X className="w-3 h-3" />
-                              Nee
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteBooking(booking.id)}
-                              className="inline-flex items-center p-1 rounded text-slate-400 hover:text-red-600"
-                              title="Verwijderen"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Duur 1 les (minuten)
+                  </label>
+                  <input
+                    type="text"
+                    name="single_lesson_minutes"
+                    value={settingsForm.single_lesson_minutes || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Duur blokuur (minuten)
+                  </label>
+                  <input
+                    type="text"
+                    name="block_lesson_minutes"
+                    value={settingsForm.block_lesson_minutes || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+
+            {/* Section 3: Contact & Bedrijfsgegevens */}
+            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+              <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                3. Contact- &amp; Bedrijfsgegevens
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Telefoonnummer weergave
+                  </label>
+                  <input
+                    type="text"
+                    name="phone_display"
+                    value={settingsForm.phone_display || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Telefoonnummer (zonder spaties, voor bellen &amp; WhatsApp)
+                  </label>
+                  <input
+                    type="text"
+                    name="phone_raw"
+                    value={settingsForm.phone_raw || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    E-mailadres
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={settingsForm.email || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Openingstijden
+                  </label>
+                  <input
+                    type="text"
+                    name="opening_hours"
+                    value={settingsForm.opening_hours || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Lesauto
+                  </label>
+                  <input
+                    type="text"
+                    name="car_model"
+                    value={settingsForm.car_model || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Lesgebied (steden)
+                  </label>
+                  <input
+                    type="text"
+                    name="service_areas"
+                    value={settingsForm.service_areas || ''}
+                    onChange={handleSettingsChange}
+                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={savingSettings}
+                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold px-5 py-2.5 rounded text-xs transition-colors cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                {savingSettings ? 'Opslaan...' : 'Wijzigingen Opslaan'}
+              </button>
+            </div>
+          </form>
         )}
 
         {/* ================================================================= */}
@@ -610,7 +567,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={openNewPackageForm}
-                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-3 py-2 rounded"
+                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-3 py-2 rounded cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Pakket Toevoegen
@@ -658,7 +615,7 @@ export default function AdminDashboard() {
 
                         <ul className="space-y-1 mb-4 text-xs text-slate-600">
                           {featureList.map((f, idx) => (
-                            <li key={idx} className=" truncate">
+                            <li key={idx} className="truncate">
                               • {f}
                             </li>
                           ))}
@@ -669,7 +626,7 @@ export default function AdminDashboard() {
                         <button
                           type="button"
                           onClick={() => openEditPackageForm(pkg)}
-                          className="flex-1 inline-flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs py-1.5 px-2 rounded"
+                          className="flex-1 inline-flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs py-1.5 px-2 rounded cursor-pointer"
                         >
                           <Pencil className="w-3 h-3" />
                           Bewerken
@@ -677,7 +634,7 @@ export default function AdminDashboard() {
                         <button
                           type="button"
                           onClick={() => handleDeletePackage(pkg.id)}
-                          className="p-1.5 rounded border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                          className="p-1.5 rounded border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                           title="Verwijderen"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -700,7 +657,7 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       onClick={() => setShowPackageModal(false)}
-                      className="text-slate-400 hover:text-slate-600"
+                      className="text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -816,14 +773,14 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => setShowPackageModal(false)}
-                        className="px-3 py-1.5 rounded border border-slate-300 font-semibold text-slate-700"
+                        className="px-3 py-1.5 rounded border border-slate-300 font-semibold text-slate-700 cursor-pointer"
                       >
                         Annuleren
                       </button>
                       <button
                         type="submit"
                         disabled={savingPackage}
-                        className="px-4 py-1.5 rounded bg-slate-900 text-white font-semibold"
+                        className="px-4 py-1.5 rounded bg-slate-900 text-white font-semibold cursor-pointer"
                       >
                         {savingPackage ? 'Opslaan...' : 'Opslaan'}
                       </button>
@@ -833,58 +790,6 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
-        )}
-
-        {/* ================================================================= */}
-        {/* TAB 3: STATISTIEKEN ONLY                                          */}
-        {/* ================================================================= */}
-        {activeTab === 'settings' && (
-          <form onSubmit={handleSaveSiteSettings} className="max-w-xl space-y-5">
-            <h1 className="text-lg font-bold text-slate-900">
-              Statistieken (Groene Balk)
-            </h1>
-
-            <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Ervaring (bijv. 15+ jaar)
-                  </label>
-                  <input
-                    type="text"
-                    name="stat_1_value"
-                    value={settingsForm.stat_1_value}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Slagingspercentage (bijv. 88%)
-                  </label>
-                  <input
-                    type="text"
-                    name="stat_2_value"
-                    value={settingsForm.stat_2_value}
-                    onChange={handleSettingsChange}
-                    className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={savingSettings}
-                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold px-5 py-2.5 rounded text-xs transition-colors"
-              >
-                <Save className="w-3.5 h-3.5" />
-                {savingSettings ? 'Opslaan...' : 'Wijzigingen Opslaan'}
-              </button>
-            </div>
-          </form>
         )}
       </div>
     </div>

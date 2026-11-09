@@ -438,7 +438,7 @@ export default function Home() {
                   Boek een vrijblijvende proefles
                 </h2>
                 <p className="text-slate-600 mt-3 leading-relaxed text-sm sm:text-base">
-                  Wil je ervaren of mijn manier van lesgeven bij je past? Vraag hiernaast je proefles aan. Je ontvangt direct een bevestiging per e-mail.
+                  Wil je ervaren of mijn manier van lesgeven bij je past? Vul hiernaast je gegevens in en stuur je aanvraag direct door via WhatsApp.
                 </p>
               </div>
 

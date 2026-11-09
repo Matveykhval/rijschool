@@ -40,16 +40,37 @@ export const DEFAULT_SITE_SETTINGS = {
   stat_2_value: '88%',
 };
 
+function sanitizeSettings(raw) {
+  const merged = {
+    ...DEFAULT_SITE_SETTINGS,
+    ...(raw && typeof raw === 'object' ? raw : {}),
+  };
+
+  // Ensure deprecated phone number is never loaded from old cache/DB rows
+  if (
+    merged.phone_raw === '0624819032' ||
+    String(merged.phone_display).includes('24 81 90 32')
+  ) {
+    merged.phone_display = DEFAULT_SITE_SETTINGS.phone_display;
+    merged.phone_raw = DEFAULT_SITE_SETTINGS.phone_raw;
+    merged.whatsapp_url = DEFAULT_SITE_SETTINGS.whatsapp_url;
+  } else if (merged.phone_raw) {
+    const cleanDigits = String(merged.phone_raw).replace(/\D/g, '');
+    const intlPhone = cleanDigits.startsWith('0')
+      ? `31${cleanDigits.slice(1)}`
+      : cleanDigits;
+    merged.whatsapp_url = `https://wa.me/${intlPhone}?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.`;
+  }
+
+  return merged;
+}
+
 function getInitialSettings() {
   try {
     const cached = localStorage.getItem('demo_site_settings');
     if (cached) {
       const parsed = JSON.parse(cached);
-      return {
-        ...DEFAULT_SITE_SETTINGS,
-        stat_1_value: parsed.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
-        stat_2_value: parsed.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
-      };
+      return sanitizeSettings(parsed);
     }
   } catch {
     // ignore storage errors
@@ -85,21 +106,9 @@ export function SiteSettingsProvider({ children }) {
           typeof data.features === 'object' &&
           !Array.isArray(data.features)
         ) {
-          const merged = {
-            ...DEFAULT_SITE_SETTINGS,
-            stat_1_value:
-              data.features.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
-            stat_2_value:
-              data.features.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
-          };
+          const merged = sanitizeSettings(data.features);
           setSettings(merged);
-          localStorage.setItem(
-            'demo_site_settings',
-            JSON.stringify({
-              stat_1_value: merged.stat_1_value,
-              stat_2_value: merged.stat_2_value,
-            })
-          );
+          localStorage.setItem('demo_site_settings', JSON.stringify(merged));
         }
       }
     } catch (err) {
@@ -114,19 +123,9 @@ export function SiteSettingsProvider({ children }) {
   }, []);
 
   const saveSettings = async (newSettings) => {
-    const editableStats = {
-      stat_1_value:
-        newSettings.stat_1_value || DEFAULT_SITE_SETTINGS.stat_1_value,
-      stat_2_value:
-        newSettings.stat_2_value || DEFAULT_SITE_SETTINGS.stat_2_value,
-    };
+    const merged = sanitizeSettings(newSettings);
 
-    const merged = {
-      ...DEFAULT_SITE_SETTINGS,
-      ...editableStats,
-    };
-
-    localStorage.setItem('demo_site_settings', JSON.stringify(editableStats));
+    localStorage.setItem('demo_site_settings', JSON.stringify(merged));
 
     if (isSupabaseConfigured && supabase) {
       const { data: existing } = await supabase
@@ -140,7 +139,7 @@ export function SiteSettingsProvider({ children }) {
         subtitle: 'Systeeminstellingen voor website statistieken',
         price: 0,
         lessons_count: 1,
-        features: editableStats,
+        features: merged,
         is_popular: false,
         sort_order: -999,
       };

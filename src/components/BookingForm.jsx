@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { useSiteSettings } from '../lib/siteSettings';
 import { openLegalModal } from './LegalAndCookies';
-import { CheckCircle2, AlertCircle, Calendar, Send } from 'lucide-react';
+import { CheckCircle2, Calendar, MessageCircle } from 'lucide-react';
 
 export default function BookingForm({ selectedPackageName }) {
   const { settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     preferred_datetime: '',
-    transmission: 'schakel',
-    message: selectedPackageName ? `Interesse in: ${selectedPackageName}` : '',
+    message: selectedPackageName ? `Ik heb interesse in het ${selectedPackageName}.` : '',
   });
 
-  const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState({ type: null, message: '' });
 
   // Update message when user clicks a specific package card
@@ -47,67 +43,37 @@ export default function BookingForm({ selectedPackageName }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setStatus({ type: null, message: '' });
 
-    try {
-      const bookingPayload = {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        preferred_datetime: formData.preferred_datetime.trim(),
-        transmission: 'schakel',
-        message: formData.message.trim() || null,
-        status: 'pending',
-      };
+    const cleanDigits = String(settings.phone_raw || '0684276649').replace(/\D/g, '');
+    const intlPhone = cleanDigits.startsWith('0')
+      ? `31${cleanDigits.slice(1)}`
+      : cleanDigits;
 
-      if (isSupabaseConfigured && supabase) {
-        const { error: insertError } = await supabase
-          .from('bookings')
-          .insert([bookingPayload]);
+    const lines = [
+      'Hoi KlaverDrive! Ik wil graag een proefles aanvragen:',
+      '',
+      `• *Naam:* ${formData.name.trim()}`,
+      `• *Telefoonnummer:* ${formData.phone.trim()}`,
+      `• *Gewenste datum/dagdeel:* ${formData.preferred_datetime.trim()}`,
+    ];
 
-        if (insertError) throw insertError;
-
-        // Trigger the confirmation and instructor notification emails via Edge Function
-        supabase.functions
-          .invoke('send-booking-email', { body: bookingPayload })
-          .catch((emailErr) => {
-            console.warn('Could not invoke send-booking-email function:', emailErr);
-          });
-      } else {
-        const localBookings = JSON.parse(localStorage.getItem('demo_bookings') || '[]');
-        localBookings.unshift({
-          id: crypto.randomUUID(),
-          ...bookingPayload,
-          created_at: new Date().toISOString(),
-        });
-        localStorage.setItem('demo_bookings', JSON.stringify(localBookings));
-      }
-
-      setStatus({
-        type: 'success',
-        message: `Bedankt voor je aanvraag! We hebben een bevestiging gestuurd naar je e-mailadres en nemen binnen ${settings.response_time_hours} uur contact met je op om de proefles definitief in te plannen.`,
-      });
-
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        preferred_datetime: '',
-        transmission: 'schakel',
-        message: '',
-      });
-    } catch (err) {
-      console.error('Error submitting booking:', err);
-      setStatus({
-        type: 'error',
-        message: `Er ging iets mis bij het versturen van je aanvraag. Probeer het opnieuw of bel/WhatsApp ons direct op ${settings.phone_display}.`,
-      });
-    } finally {
-      setSubmitting(false);
+    if (formData.message.trim()) {
+      lines.push(`• *Toelichting / Ophaaladres:* ${formData.message.trim()}`);
     }
+
+    const whatsappUrl = `https://wa.me/${intlPhone}?text=${encodeURIComponent(
+      lines.join('\n')
+    )}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    setStatus({
+      type: 'success',
+      message:
+        'WhatsApp is geopend met je gegevens! Verstuur het bericht in WhatsApp om je proefles direct aan te vragen.',
+    });
   };
 
   return (
@@ -124,13 +90,6 @@ export default function BookingForm({ selectedPackageName }) {
       {status.type === 'success' && (
         <div className="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 flex items-start gap-3 text-emerald-900">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-          <div className="text-sm leading-relaxed">{status.message}</div>
-        </div>
-      )}
-
-      {status.type === 'error' && (
-        <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 flex items-start gap-3 text-red-900">
-          <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
           <div className="text-sm leading-relaxed">{status.message}</div>
         </div>
       )}
@@ -178,25 +137,6 @@ export default function BookingForm({ selectedPackageName }) {
 
         <div>
           <label
-            htmlFor="email"
-            className="block text-sm font-semibold text-slate-800 mb-1.5"
-          >
-            E-mailadres <span className="text-red-600">*</span>
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="sanne@voorbeeld.nl"
-            className="w-full rounded-md border border-slate-300 px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-emerald-800 focus:outline-none focus:ring-1 focus:ring-emerald-800 text-sm"
-          />
-        </div>
-
-        <div>
-          <label
             htmlFor="preferred_datetime"
             className="block text-sm font-semibold text-slate-800 mb-1.5"
           >
@@ -237,11 +177,10 @@ export default function BookingForm({ selectedPackageName }) {
 
         <button
           type="submit"
-          disabled={submitting}
-          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 text-white font-bold py-3.5 px-6 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2 text-base"
+          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-6 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2 text-base cursor-pointer"
         >
-          <Send className="w-4 h-4" />
-          {submitting ? 'Aanvraag wordt verstuurd...' : 'Proefles Aanvragen'}
+          <MessageCircle className="w-5 h-5" />
+          Proefles Aanvragen via WhatsApp
         </button>
 
         <p className="text-xs text-slate-500 text-center leading-relaxed">
