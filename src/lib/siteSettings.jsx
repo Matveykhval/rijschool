@@ -21,10 +21,10 @@ export const SITE_INFO = {
   response_time_hours: '24',
 
   // Bedrijfs- & Contactgegevens
-  phone_display: '06 - 24 81 90 32',
-  phone_raw: '0624819032',
+  phone_display: '06 - 84 27 66 49',
+  phone_raw: '0684276649',
   whatsapp_url:
-    'https://wa.me/31624819032?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.',
+    'https://wa.me/31684276649?text=Hoi!%20Ik%20heb%20interesse%20in%20een%20proefles%20bij%20Rijschool%20KlaverDrive.',
   email: 'info@klaverdrive.nl',
   cbr_number: '1085G9',
   kvk_number: '92860605',

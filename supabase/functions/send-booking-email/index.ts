@@ -90,7 +90,7 @@ serve(async (req: Request) => {
                 }
               </div>
 
-              <p>Heb je in de tussentijd alvast een vraag? Je kunt altijd bellen of WhatsAppen naar <strong>06 - 24 81 90 32</strong>.</p>
+              <p>Heb je in de tussentijd alvast een vraag? Je kunt altijd bellen of WhatsAppen naar <strong>06 - 84 27 66 49</strong>.</p>
               <p style="margin-top: 24px;">Met vriendelijke groet,<br/><strong>Rijschool KlaverDrive</strong></p>
             </div>
           </div>
