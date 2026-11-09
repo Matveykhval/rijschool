@@ -193,7 +193,11 @@ export default function Home() {
 
       {/* DYNAMIC PACKAGES & PRICING SECTION */}
       <section id="pakketten" className="py-16 md:py-24 bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div
+          className={`mx-auto px-4 sm:px-6 lg:px-8 ${
+            packages.length >= 4 ? 'max-w-[1400px]' : 'max-w-6xl'
+          }`}
+        >
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
               Heldere Tarieven
@@ -218,8 +222,8 @@ export default function Home() {
           ) : (
             <div
               className={`grid grid-cols-1 gap-6 items-stretch ${
-                packages.length === 4
-                  ? 'md:grid-cols-2 lg:grid-cols-4'
+                packages.length >= 4
+                  ? 'md:grid-cols-2 xl:grid-cols-4'
                   : packages.length === 2
                   ? 'md:grid-cols-2 max-w-4xl mx-auto'
                   : 'md:grid-cols-3'
@@ -230,43 +234,50 @@ export default function Home() {
                 return (
                   <div
                     key={pkg.id}
-                    className={`rounded-lg p-6 flex flex-col justify-between relative ${
+                    className={`rounded-xl p-6 sm:p-7 flex flex-col justify-between relative transition-shadow ${
                       pkg.is_popular
                         ? 'border-2 border-emerald-800 bg-white shadow-md'
-                        : 'border border-slate-200 bg-slate-50/60 shadow-sm'
+                        : 'border border-slate-200 bg-slate-50/60 shadow-sm hover:shadow-md'
                     }`}
                   >
                     {pkg.is_popular && (
-                      <div className="absolute -top-3.5 left-6 bg-emerald-800 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-emerald-800 text-white text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-sm">
                         Meest Gekozen
                       </div>
                     )}
 
                     <div>
-                      <div className="flex items-baseline justify-between gap-2">
-                        <h3 className="text-xl font-extrabold text-slate-900">{pkg.name}</h3>
-                        <span className="text-xs font-bold text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded">
-                          {pkg.lessons_count} lessen
-                        </span>
+                      {/* Card Header with fixed min-height so prices & dividers align across all 4 cards */}
+                      <div className="min-h-[84px] flex flex-col justify-start">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+                            {pkg.name}
+                          </h3>
+                          <span className="whitespace-nowrap shrink-0 text-xs font-bold text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded-md">
+                            {pkg.lessons_count} lessen
+                          </span>
+                        </div>
+
+                        {pkg.subtitle && (
+                          <p className="text-sm text-slate-600 mt-1.5 leading-snug">
+                            {pkg.subtitle}
+                          </p>
+                        )}
                       </div>
 
-                      {pkg.subtitle && (
-                        <p className="text-sm text-slate-600 mt-1.5">{pkg.subtitle}</p>
-                      )}
-
-                      <div className="my-6 pb-6 border-b border-slate-200">
-                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+                      <div className="my-5 pb-5 border-b border-slate-200">
+                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                           € {Number(pkg.price).toLocaleString('nl-NL', { minimumFractionDigits: 0 })}
                         </span>
-                        <span className="text-xs text-slate-500 block mt-1">
+                        <span className="text-xs text-slate-500 block mt-1.5 leading-relaxed">
                           Inclusief btw &amp; CBR praktijkexamen &bull; Geen inschrijfkosten
                         </span>
                       </div>
 
                       <ul className="space-y-3 mb-8">
                         {featureList.map((feature, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-700">
-                            <Check className="w-4 h-4 text-emerald-700 shrink-0 mt-1" />
+                          <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-700 leading-snug">
+                            <Check className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -276,13 +287,13 @@ export default function Home() {
                     <button
                       type="button"
                       onClick={() => handleChoosePackage(pkg.name)}
-                      className={`w-full py-3 px-4 rounded-md font-bold text-sm transition-colors ${
+                      className={`w-full min-h-[48px] py-3 px-4 rounded-md font-bold text-sm transition-colors flex items-center justify-center text-center cursor-pointer ${
                         pkg.is_popular
                           ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm'
                           : 'bg-emerald-900 hover:bg-emerald-950 text-white'
                       }`}
                     >
-                      Start met Proefles ({pkg.name})
+                      Start met Proefles
                     </button>
                   </div>
                 );
