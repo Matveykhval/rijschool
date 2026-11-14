@@ -425,7 +425,7 @@ export default function Home() {
             {[
               {
                 q: 'Wat kost een proefles als ik daarna nog geen pakket kies?',
-                a: 'Wanneer je na de proefles kiest voor een van onze lespakketten, is de proefles helemaal gratis. Besluit je om losse lessen te volgen of niet verder te gaan? Dan rekenen we enkel het tarief van een losse les.',
+                a: 'Een proefles duurt een volledig blokuur van 100 minuten, waarvan de eerste helft (50 minuten) helemaal gratis is. Kies je na de proefles nog geen lespakket, dan betaal je dus alleen voor de tweede helft.',
               },
               {
                 q: 'Kan ik bij jullie al vanaf 16,5 jaar starten met rijles (2toDrive)?',
